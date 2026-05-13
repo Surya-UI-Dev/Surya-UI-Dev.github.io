@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Surya Prakash | Frontend Developer</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- AOS Animation -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"/>
+
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --accent-1: #4f46e5; /* Indigo */
+            --accent-2: #06b6d4; /* Cyan */
+            --accent-3: #ec4899; /* Pink */
+            --glass-bg: rgba(17, 24, 39, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; cursor: none !important; }
+        
+        html { scroll-behavior:smooth; }
+        
+        body { 
+            font-family:'Outfit', sans-serif; 
+            background: var(--bg-color); 
+            color: var(--text-main); 
+            overflow-x: hidden; 
+            line-height: 1.6;
+        }
+
+        a { text-decoration:none; }
+
+        ::-webkit-scrollbar { width:8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { 
+            background: linear-gradient(to bottom, var(--accent-1), var(--accent-2)); 
+            border-radius:10px; 
+        }
+
+        /* 1. SCROLL PROGRESS BAR */
+        #scroll-progress {
+            position: fixed;
+            top: 0; left: 0;
+            width: 0%; height: 4px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            z-index: 10000;
+            transition: width 0.1s ease-out;
+            box-shadow: 0 0 10px var(--accent-2);
+        }
+
+        /* 2. CUSTOM CURSOR */
+        #cursor-dot {
+            position: fixed; width: 8px; height: 8px;
+            background: var(--accent-2); border-radius: 50%;
+            pointer-events: none; z-index: 99999;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px var(--accent-2);
+            transition: width 0.2s, height 0.2s, background 0.2s;
+        }
+
+        #cursor-outline {
+            position: fixed; width: 40px; height: 40px;
+            border: 1px solid rgba(6, 182, 212, 0.5); border-radius: 50%;
+            pointer-events: none; z-index: 99998;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background 0.2s, border-color 0.2s;
+        }
+
+        /* Hover states for cursor */
+        body.hovering #cursor-outline {
+            width: 60px; height: 60px;
+            background: rgba(6, 182, 212, 0.1);
+            border-color: transparent;
+            backdrop-filter: blur(2px);
+        }
+        body.hovering #cursor-dot {
+            width: 12px; height: 12px;
+            background: var(--accent-3);
+            box-shadow: 0 0 15px var(--accent-3);
+        }
+
+        /* PRO BACKGROUND CANVAS */
+        #bg-canvas {
+            position: fixed; top: 0; left: 0; 
+            width: 100vw; height: 100vh;
+            z-index: -1; pointer-events: none;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            width:100%; position:fixed; top:0; left:0; z-index:999; 
+            padding:20px 8%; background: rgba(3, 7, 18, 0.5); 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border); 
+            transition: all 0.4s ease;
+        }
+
+        .nav-container { display:flex; justify-content:space-between; align-items:center; }
+
+        .logo {
+            font-size: 26px; font-weight: 800; 
+            background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; 
+            letter-spacing: -0.5px;
+        }
+        
+        .nav-links a { 
+            color: var(--text-muted); margin-left:40px; 
+            transition: all 0.3s ease; font-weight: 500; 
+            font-size: 15px; position: relative; 
+        }
+        
+        .nav-links a::after {
+            content: ''; position: absolute; width: 0; height: 2px;
+            bottom: -6px; left: 0; background: linear-gradient(90deg, var(--accent-1), var(--accent-2)); 
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a:hover { color: #ffffff; }
+
+        /* HERO */
+        .hero { 
+            min-height: 100vh; display: flex; align-items: center; 
+            padding: 120px 8% 80px; position: relative; 
+        }
+        
+        .hero-content { max-width: 900px; position: relative; z-index: 10; }
+        
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 10px; 
+            padding: 8px 20px; border-radius: 50px; margin-bottom: 30px;
+            background: rgba(79, 70, 229, 0.1); border: 1px solid rgba(79, 70, 229, 0.3); 
+            color: #a5b4fc; font-size: 13px; font-weight: 600; letter-spacing: 1px;
+            backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(79, 70, 229, 0.15);
+        }
+
+        .pulse-dot {
+            width: 8px; height: 8px; background-color: #34d399; border-radius: 50%;
+            box-shadow: 0 0 10px #34d399, 0 0 20px #34d399; animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(52, 211, 153, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+        }
+
+        .hero h1 { 
+            font-size: 85px; line-height: 1.1; margin-bottom: 30px; 
+            font-weight: 800; color: #ffffff; letter-spacing: -2px; 
+        }
+        
+        .gradient-text {
+            background: linear-gradient(to right, var(--accent-1), var(--accent-2), var(--accent-3), var(--accent-1)); 
+            background-size: 300% auto; -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; animation: shine 6s linear infinite;
+        }
+        
+        @keyframes shine { to { background-position: 300% center; } }
+        
+        /* 4. TYPEWRITER EFFECT STYLING */
+        .hero p { 
+            font-size: 22px; line-height: 1.8; color: var(--text-muted); 
+            margin-bottom: 50px; max-width: 700px; font-weight: 300;
+        }
+
+        .typewriter-text { font-weight: 600; color: #ffffff; }
+        .cursor-blink { font-weight: 600; color: var(--accent-2); animation: blink 0.8s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .hero-buttons { display: flex; gap: 20px; flex-wrap: wrap; }
+
+        .btn {
+            padding: 16px 36px; border-radius: 14px; font-size: 15px; font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border: none; display: inline-flex; align-items: center; gap: 12px;
+            position: relative; overflow: hidden; z-index: 1;
+        }
+        
+        .btn::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: translateX(-100%); transition: 0.6s; z-index: -1;
+        }
+        
+        .btn:hover::before { transform: translateX(100%); }
+        
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); color: #fff; 
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.4); 
+        }
+        .btn-primary:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(6, 182, 212, 0.5); }
+        
+        .btn-outline { 
+            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); 
+            color: #fff; border: 1px solid var(--glass-border); 
+        }
+        .btn-outline:hover { 
+            background: rgba(255, 255, 255, 0.1); transform: translateY(-5px); 
+            border-color: rgba(255, 255, 255, 0.3); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* SECTIONS */
+        section { padding: 120px 8%; position: relative; z-index: 10; }
+        
+        .section-header { 
+            margin-bottom: 70px; display: flex; flex-direction: column;
+            align-items: center; text-align: center;
+        }
+        
+        .section-tag {
+            font-size: 14px; font-weight: 700; color: var(--accent-2);
+            text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: inline-block;
+        }
+        
+        .section-title h2 { font-size: 48px; font-weight: 800; color: #ffffff; letter-spacing: -1px; margin-bottom: 20px; }
+        .section-title p { color: var(--text-muted); font-size: 18px; max-width: 600px; margin: 0 auto; font-weight: 300; }
+
+        /* GLASSMORPHISM DARK CARD */
+        .glass-card {
+            background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); border-radius: 24px; 
+            box-shadow: var(--glass-shadow); position: relative;
+            transition: all 0.4s ease; overflow: hidden;
+            /* For Vanilla Tilt to preserve 3d elements */
+            transform-style: preserve-3d;
+        }
+        
+        .glass-card::before {
+            content: ""; position: absolute; inset: 0; border-radius: 24px; padding: 1px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+        }
+
+        /* Hover effect slightly reduced here to let Vanilla Tilt handle the transform */
+        .glass-card:hover { 
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 40px rgba(79, 70, 229, 0.1); 
+        }
+
+        /* CIRCULAR SKILLS UI */
+        .skills-circular-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px;
+        }
+
+        .skill-circular-card {
+            padding: 40px 20px; display: flex; flex-direction: column;
+            align-items: center; text-align: center;
+        }
+
+        .circular-progress { position: relative; width: 120px; height: 120px; margin-bottom: 25px; transform: translateZ(30px); }
+        .circular-progress svg { width: 100%; height: 100%; transform: rotate(-90deg); filter: drop-shadow(0 0 10px rgba(79, 70, 229, 0.4)); }
+        .bg-circle { fill: none; stroke: rgba(255, 255, 255, 0.05); stroke-width: 6; }
+        .progress-circle {
+            fill: none; stroke-width: 6; stroke-linecap: round;
+            stroke-dasharray: 251.2; stroke-dashoffset: 251.2;
+            transition: stroke-dashoffset 2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .inner-icon {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 32px; color: #fff; background: rgba(0, 0, 0, 0.3);
+            width: 76px; height: 76px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 0 15px rgba(0,0,0,0.2);
+            transition: all 0.4s ease;
+        }
+
+        .skill-circular-card:hover .inner-icon {
+            background: rgba(255, 255, 255, 0.05); transform: translate(-50%, -50%) scale(1.1);
+            color: var(--accent-2); box-shadow: inset 0 0 20px rgba(79, 70, 229, 0.4), 0 0 20px rgba(6, 182, 212, 0.3);
+        }
+
+        .skill-info h4 { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 8px; transform: translateZ(20px); }
+        .skill-info .percent-text {
+            font-size: 26px; font-weight: 800; background: linear-gradient(to right, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; transform: translateZ(20px); display: inline-block;
+        }
+
+        /* PROJECTS */
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px; }
+        
+        .project-card { padding: 0; display: flex; flex-direction: column; }
+        
+        /* 3. ANIMATED GRADIENT MESH IMAGES */
+        @keyframes gradientMesh {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .project-image-placeholder { 
+            height: 240px; 
+            border-bottom: 1px solid var(--glass-border);
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 60px; color: rgba(255,255,255,0.7);
+            position: relative; overflow: hidden;
+            /* The gradient mesh background */
+            background: linear-gradient(-45deg, #4f46e5, #0ea5e9, #8b5cf6, #3b82f6);
+            background-size: 400% 400%;
+            animation: gradientMesh 12s ease infinite;
+            transform: translateZ(30px);
+        }
+        
+        /* Different gradient for second project */
+        .mesh-2 {
+            background: linear-gradient(-45deg, #10b981, #06b6d4, #f59e0b, #ec4899);
+            background-size: 400% 400%;
+            animation: gradientMesh 15s ease infinite alternate;
+        }
+        
+        .project-image-placeholder::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); /* slight dark overlay so icon pops */
+            transition: opacity 0.5s ease;
+        }
+        
+        .project-card:hover .project-image-placeholder::after { opacity: 0.1; }
+        .project-card:hover .project-image-placeholder i { transform: scale(1.2); text-shadow: 0 0 30px rgba(255,255,255,0.8); }
+        .project-image-placeholder i { position: relative; z-index: 2; transition: all 0.5s ease; }
+
+        .project-content { padding: 40px; flex-grow: 1; display: flex; flex-direction: column; transform: translateZ(20px); }
+        .project-content h3 { font-size: 26px; font-weight: 700; margin-bottom: 15px; color: #fff; }
+        .project-content p { color: var(--text-muted); font-size: 16px; line-height: 1.7; margin-bottom: 30px; flex-grow: 1; font-weight: 300; }
+        
+        .tech-tags { display: flex; flex-wrap: wrap; gap: 12px; margin-top: auto; }
+        .tech-tags span { 
+            font-size: 13px; padding: 6px 16px; border-radius: 8px; 
+            background: rgba(255,255,255,0.05); color: #e2e8f0; font-weight: 500; 
+            border: 1px solid var(--glass-border); transition: all 0.3s ease;
+        }
+        .project-card:hover .tech-tags span {
+            background: rgba(79, 70, 229, 0.15); border-color: rgba(79, 70, 229, 0.3); color: #c7d2fe;
+        }
+
+        /* STATS */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        
+        .stat-card { text-align: center; padding: 50px 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .stat-card h3 { font-size: 56px; font-weight: 800; margin-bottom: 10px; background: linear-gradient(to right, var(--accent-1), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; transform: translateZ(20px); }
+        .stat-card p { color: var(--text-muted); font-weight: 500; font-size: 18px; text-transform: uppercase; letter-spacing: 2px; transform: translateZ(10px); }
+        
+        /* 5. GLASSMORPHIC CONTACT FORM */
+        .contact-container {
+            max-width: 900px; margin: auto; padding: 60px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 50px;
+            background: linear-gradient(180deg, rgba(17, 24, 39, 0.6) 0%, rgba(3, 7, 18, 0.8) 100%);
+        }
+        
+        .contact-text h2 { font-size: 42px; font-weight: 800; margin-bottom: 20px; color: #fff; letter-spacing: -1px; }
+        .contact-text p { color: var(--text-muted); margin-bottom: 40px; line-height: 1.8; font-size: 18px; font-weight: 300; }
+        
+        .contact-form { display: flex; flex-direction: column; gap: 20px; }
+        
+        .input-group { position: relative; }
+        .input-group input, .input-group textarea {
+            width: 100%; padding: 18px 20px; border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border);
+            color: #fff; font-family: 'Outfit', sans-serif; font-size: 15px;
+            transition: all 0.3s ease; outline: none;
+        }
+        
+        .input-group textarea { resize: vertical; min-height: 150px; }
+        
+        .input-group input:focus, .input-group textarea:focus {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--accent-2);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+        }
+
+        .input-group label {
+            position: absolute; left: 20px; top: 18px; color: var(--text-muted);
+            font-size: 15px; pointer-events: none; transition: all 0.3s ease;
+        }
+
+        .input-group input:focus ~ label, .input-group input:valid ~ label,
+        .input-group textarea:focus ~ label, .input-group textarea:valid ~ label {
+            top: -10px; left: 15px; font-size: 12px; color: var(--accent-2);
+            background: var(--bg-color); padding: 0 8px; border-radius: 4px;
+        }
+
+        .social-links { display: flex; gap: 15px; margin-top: 30px; }
+        .social-links a { 
+            width: 50px; height: 50px; display: inline-flex; align-items: center; justify-content: center; 
+            border-radius: 12px; background: rgba(255,255,255,0.03); color: #fff; font-size: 20px; 
+            transition: all 0.4s ease; border: 1px solid var(--glass-border); 
+        }
+        .social-links a:hover { 
+            transform: translateY(-5px); background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); 
+            border-color: transparent; box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4); 
+        }
+
+        footer { 
+            text-align: center; padding: 40px; color: var(--text-muted); 
+            border-top: 1px solid var(--glass-border); font-weight: 400; font-size: 15px;
+            background: var(--bg-color); position: relative; z-index: 10;
+        }
+        
+        @media(max-width: 900px) {
+            .contact-container { grid-template-columns: 1fr; padding: 40px 30px; }
+            .hero h1 { font-size: 52px; } .hero { padding-top: 150px; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. SCROLL PROGRESS BAR -->
+    <div id="scroll-progress"></div>
+
+    <!-- 2. CUSTOM CURSOR -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-outline"></div>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="logo">Surya Prakash</div>
+            <div class="nav-links">
+                <a href="#skills" class="hover-target">Expertise</a>
+                <a href="#projects" class="hover-target">Work</a>
+                <a href="#stats" class="hover-target">Impact</a>
+                <a href="#contact" class="hover-target">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content" data-aos="fade-up" data-aos-duration="1200">
+            <div class="hero-badge">
+                <div class="pulse-dot"></div>
+                Available for new opportunities
+            </div>
+            <h1>Frontend Engineering<br><span class="gradient-text">Reimagined.</span></h1>
+            
+            <!-- 3. TYPEWRITER EFFECT -->
+            <p>I architect <span class="typewriter-text" id="typewriter"></span><span class="cursor-blink">|</span></p>
+            
+            <div class="hero-buttons">
+                <a href="#projects" class="btn btn-primary hover-target">Explore Work <i class="fa fa-arrow-right"></i></a>
+                <a href="#contact" class="btn btn-outline hover-target">Get in Touch</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills">
+        <div class="section-header" data-aos="fade-up">
+            <span class="section-tag">Capabilities</span>
+            <div class="section-title">
+                <h2>Technical Arsenal</h2>
+                <p>Mastering modern web technologies to build enterprise-grade applications.</p>
+            </div>
+        </div>
+
+        <svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
+            <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4f46e5" /><stop offset="100%" stop-color="#06b6d4" /></linearGradient>
+                <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#eab308" /><stop offset="100%" stop-color="#f97316" /></linearGradient>
+                <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0ea5e9" /><stop offset="100%" stop-color="#6366f1" /></linearGradient>
+                <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8b5cf6" /><stop offset="100%" stop-color="#d946ef" /></linearGradient>
+                <linearGradient id="grad5" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#10b981" /><stop offset="100%" stop-color="#14b8a6" /></linearGradient>
+                <linearGradient id="grad6" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f43f5e" /><stop offset="100%" stop-color="#ec4899" /></linearGradient>
+            </defs>
+        </svg>
+
+        <div class="skills-circular-grid">
+            <div class="glass-card skill-circular-card" data-aos="fade-up" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.2">
+                <div class="circular-progress" data-percent="95">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="bg-circle" cx="50" cy="50" r="40"></circle>
+                        <circle class="progress-circle" cx="50" cy="50" r="40" stroke="url(#grad1)"></circle>
+                    </svg>
+                    <div class="inner-icon"><i class="fa fa-html5"></i></div>
+                </div>
+                <div class="skill-info">
+                    <h4>HTML5 / CSS3</h4>
+                    <span class="percent-text" data-target="95">0%</span>
+                </div>
+            </div>
+
+            <div class="glass-card skill-circular-card" data-aos="fade-up" data-aos-delay="100" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.2">
+                <div class="circular-progress" data-percent="92">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="bg-circle" cx="50" cy="50" r="40"></circle>
+                        <circle class="progress-circle" cx="50" cy="50" r="40" stroke="url(#grad2)"></circle>
+                    </svg>
+                    <div class="inner-icon"><i class="fa fa-code"></i></div>
+                </div>
+                <div class="skill-info">
+                    <h4>JavaScript (ES6+)</h4>
+                    <span class="percent-text" data-target="92">0%</span>
+                </div>
+            </div>
+
+            <div class="glass-card skill-circular-card" data-aos="fade-up" data-aos-delay="200" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.2">
+                <div class="circular-progress" data-percent="88">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="bg-circle" cx="50" cy="50" r="40"></circle>
+                        <circle class="progress-circle" cx="50" cy="50" r="40" stroke="url(#grad3)"></circle>
+                    </svg>
+                    <div class="inner-icon"><i class="fa fa-cogs"></i></div>
+                </div>
+                <div class="skill-info">
+                    <h4>React JS Ecosystem</h4>
+                    <span class="percent-text" data-target="88">0%</span>
+                </div>
+            </div>
+
+            <div class="glass-card skill-circular-card" data-aos="fade-up" data-aos-delay="300" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.2">
+                <div class="circular-progress" data-percent="90">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="bg-circle" cx="50" cy="50" r="40"></circle>
+                        <circle class="progress-circle" cx="50" cy="50" r="40" stroke="url(#grad4)"></circle>
+                    </svg>
+                    <div class="inner-icon"><i class="fa fa-cubes"></i></div>
+                </div>
+                <div class="skill-info">
+                    <h4>UI Frameworks</h4>
+                    <span class="percent-text" data-target="90">0%</span>
+                </div>
+            </div>
+
+            <div class="glass-card skill-circular-card" data-aos="fade-up" data-aos-delay="400" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.2">
+                <div class="circular-progress" data-percent="85">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="bg-circle" cx="50" cy="50" r="40"></circle>
+                        <circle class="progress-circle" cx="50" cy="50" r="40" stroke="url(#grad5)"></circle>
+                    </svg>
+                    <div class="inner-icon"><i class="fa fa-pie-chart"></i></div>
+                </div>
+                <div class="skill-info">
+                    <h4>ECharts / D3.js</h4>
+                    <span class="percent-text" data-target="85">0%</span>
+                </div>
+            </div>
+
+            <div class="glass-card skill-circular-card" data-aos="fade-up" data-aos-delay="500" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.2">
+                <div class="circular-progress" data-percent="94">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="bg-circle" cx="50" cy="50" r="40"></circle>
+                        <circle class="progress-circle" cx="50" cy="50" r="40" stroke="url(#grad6)"></circle>
+                    </svg>
+                    <div class="inner-icon"><i class="fa fa-paint-brush"></i></div>
+                </div>
+                <div class="skill-info">
+                    <h4>UI Architecture</h4>
+                    <span class="percent-text" data-target="94">0%</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <div class="section-header" data-aos="fade-up">
+            <span class="section-tag">Portfolio</span>
+            <div class="section-title">
+                <h2>Selected Deployments</h2>
+                <p>Architecting scalable solutions with an uncompromising focus on user experience.</p>
+            </div>
+        </div>
+
+        <div class="projects-grid">
+            <div class="glass-card project-card hover-target" data-aos="fade-up" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.3">
+                <div class="project-image-placeholder"><i class="fa fa-play"></i></div>
+                <div class="project-content">
+                    <h3>Cloud Muez Platform</h3>
+                    <p>Engineered a comprehensive custom media player with an immersive visual interface, smooth playback interactions, and optimized DOM rendering for high performance.</p>
+                    <div class="tech-tags">
+                        <span>Vanilla JS</span><span>HTML5 Canvas</span><span>CSS3 Animations</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card project-card hover-target" data-aos="fade-up" data-aos-delay="150" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.3">
+                <div class="project-image-placeholder mesh-2"><i class="fa fa-shield"></i></div>
+                <div class="project-content">
+                    <h3>Enterprise Admin Console</h3>
+                    <p>Developed an extensive compliance and administration interface featuring complex search panels, real-time data visualization, and scalable dynamic structural templates.</p>
+                    <div class="tech-tags">
+                        <span>jQuery / AJAX</span><span>ECharts Integrations</span><span>Bootstrap Grid</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="stats">
+        <div class="stats-grid">
+            <div class="glass-card stat-card" data-aos="zoom-in" data-aos-delay="0" data-tilt data-tilt-scale="1.05">
+                <h3>25+</h3>
+                <p>Projects Deployed</p>
+            </div>
+            <div class="glass-card stat-card" data-aos="zoom-in" data-aos-delay="150" data-tilt data-tilt-scale="1.05">
+                <h3>4+</h3>
+                <p>Years Experience</p>
+            </div>
+            <div class="glass-card stat-card" data-aos="zoom-in" data-aos-delay="300" data-tilt data-tilt-scale="1.05">
+                <h3>100+</h3>
+                <p>Components Built</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="glass-card contact-container" data-aos="fade-up">
+            <div class="contact-text">
+                <h2>Let's build something exceptional.</h2>
+                <p>I'm currently looking for new opportunities to collaborate on innovative products. Whether you have a project in mind or just want to connect, my inbox is always open.</p>
+                <div class="social-links">
+                    <a href="#" class="hover-target" target="_blank"><i class="fa fa-github"></i></a>
+                    <a href="#" class="hover-target" target="_blank"><i class="fa fa-linkedin"></i></a>
+                    <a href="#" class="hover-target" target="_blank"><i class="fa fa-twitter"></i></a>
+                </div>
+            </div>
+            <form class="contact-form" onsubmit="event.preventDefault();">
+                <div class="input-group">
+                    <input type="text" id="name" required>
+                    <label for="name">Your Name</label>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="email" required>
+                    <label for="email">Email Address</label>
+                </div>
+                <div class="input-group">
+                    <textarea id="message" required></textarea>
+                    <label for="message">Message</label>
+                </div>
+                <button type="submit" class="btn btn-primary hover-target" style="width:100%; justify-content:center; margin-top:10px;">
+                    <i class="fa fa-paper-plane"></i> Send Message
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2026 Surya Prakash &bull; Engineered with passion & precision.
+    </footer>
+
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Vanilla Tilt 3D Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    
+    <script>
+        // 1. SCROLL RESTORATION & PROGRESS & NAVBAR EFFECT
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+        window.scrollTo(0, 0);
+
+        window.addEventListener('scroll', () => {
+            // Navbar Glass effect
+            const navbar = document.getElementById('navbar');
+            if(window.scrollY > 50) {
+                navbar.style.padding = '15px 8%';
+                navbar.style.background = 'rgba(3, 7, 18, 0.8)';
+            } else {
+                navbar.style.padding = '20px 8%';
+                navbar.style.background = 'rgba(3, 7, 18, 0.5)';
+            }
+
+            // Scroll Progress Bar
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("scroll-progress").style.width = scrolled + "%";
+        });
+
+        // 2. CUSTOM CURSOR
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorOutline = document.getElementById('cursor-outline');
+        
+        window.addEventListener('mousemove', function(e) {
+            const posX = e.clientX;
+            const posY = e.clientY;
+            
+            cursorDot.style.left = posX + 'px';
+            cursorDot.style.top = posY + 'px';
+            
+            // Add a slight delay to the outline for physical feel
+            cursorOutline.animate({
+                left: posX + 'px',
+                top: posY + 'px'
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Add magnetic hover class when hovering over specific elements
+        document.querySelectorAll('a, button, input, textarea, .hover-target').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+        });
+
+        // 3. DYNAMIC TYPEWRITER EFFECT
+        const phrases = ["Responsive Dashboards.", "Interactive WebGL Experiences.", "Fluid UI Systems.", "Enterprise Applications."];
+        let i = 0; let j = 0; let isDeleting = false; let isEnd = false;
+        const speed = 150; const waitTime = 3000;
+        
+        function loopTypewriter() {
+            isEnd = false;
+            document.getElementById("typewriter").innerHTML = phrases[i].substring(0, j);
+
+            if (!isDeleting && j <= phrases[i].length) {
+                j++;
+                setTimeout(loopTypewriter, speed);
+            }
+            if (isDeleting && j <= phrases[i].length) {
+                j--;
+                setTimeout(loopTypewriter, speed / 2);
+            }
+            if (j == phrases[i].length) {
+                isEnd = true;
+                isDeleting = true;
+                setTimeout(loopTypewriter, waitTime);
+            }
+            if (j === 0 && isDeleting) {
+                isDeleting = false;
+                i++;
+                if (i === phrases.length) i = 0;
+                setTimeout(loopTypewriter, 300);
+            }
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(loopTypewriter, 1000);
+        });
+
+        // 4. INITIALIZE AOS
+        AOS.init({ 
+            duration: 900, 
+            once: true, 
+            offset: 50,
+            easing: 'ease-out-cubic'
+        });
+
+        // 5. SKILLS PROGRESS CIRCULAR ANIMATIONS
+        document.addEventListener("DOMContentLoaded", function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const item = entry.target;
+                        const progressCircle = item.querySelector('.progress-circle');
+                        const percentText = item.querySelector('.percent-text');
+                        const targetPercent = parseInt(percentText.getAttribute('data-target'));
+                        
+                        setTimeout(() => {
+                            const circumference = 251.2;
+                            const offset = circumference - (targetPercent / 100) * circumference;
+                            progressCircle.style.strokeDashoffset = offset;
+                            
+                            let count = 0;
+                            const duration = 1500; 
+                            const intervalTime = duration / targetPercent; 
+                            
+                            let counter = setInterval(() => {
+                                count++;
+                                percentText.innerText = count + '%';
+                                if (count >= targetPercent) clearInterval(counter);
+                            }, intervalTime);
+                        }, 400);
+
+                        observer.unobserve(item);
+                    }
+                });
+            }, { threshold: 0.6 });
+
+            document.querySelectorAll('.skill-circular-card').forEach(item => observer.observe(item));
+        });
+
+        // 6. PRO INTERACTIVE NETWORK TOPOLOGY CANVAS
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let particles = [];
+        const connectionDistance = 150;
+        
+        let mouse = { x: null, y: null, radius: 200 }; 
+        
+        window.addEventListener('mousemove', (e) => { 
+            mouse.x = e.x; 
+            mouse.y = e.y; 
+        });
+
+        // When mouse leaves screen
+        window.addEventListener('mouseout', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        function resize() { 
+            width = canvas.width = window.innerWidth; 
+            height = canvas.height = window.innerHeight; 
+        }
+        
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Node {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 2 + 1;
+                const isCyan = Math.random() > 0.5;
+                this.color = isCyan ? 'rgba(6, 182, 212, 0.6)' : 'rgba(79, 70, 229, 0.6)';
+            }
+
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+
+                if (mouse.x != null && mouse.y != null) {
+                    let dx = mouse.x - this.x; let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < mouse.radius) {
+                        const forceDirectionX = dx / distance; const forceDirectionY = dy / distance;
+                        const force = (mouse.radius - distance) / mouse.radius;
+                        this.x -= forceDirectionX * force * 2; this.y -= forceDirectionY * force * 2;
+                    }
+                }
+            }
+
+            draw() {
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color; ctx.fill();
+            }
+        }
+
+        function initNetwork() {
+            particles = [];
+            const particleCount = Math.min(Math.floor((width * height) / 15000), 100);
+            for (let i = 0; i < particleCount; i++) particles.push(new Node());
+        }
+
+        function drawLines() {
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a; b < particles.length; b++) {
+                    let dx = particles[a].x - particles[b].x;
+                    let dy = particles[a].y - particles[b].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < connectionDistance) {
+                        let opacity = 1 - (distance / connectionDistance);
+                        ctx.beginPath(); ctx.strokeStyle = `rgba(99, 102, 241, ${opacity * 0.2})`;
+                        ctx.lineWidth = 1; ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y); ctx.stroke();
+                    }
+                }
+                
+                if (mouse.x != null && mouse.y != null) {
+                    let dx = particles[a].x - mouse.x; let dy = particles[a].y - mouse.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < connectionDistance * 1.5) {
+                        let opacity = 1 - (distance / (connectionDistance * 1.5));
+                        ctx.beginPath(); ctx.strokeStyle = `rgba(6, 182, 212, ${opacity * 0.4})`;
+                        ctx.lineWidth = 1.5; ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            drawLines();
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update(); particles[i].draw();
+            }
+            requestAnimationFrame(animate);
+        }
+
+        initNetwork(); animate();
+    </script>
+</body>
+</html>
