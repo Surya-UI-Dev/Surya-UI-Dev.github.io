@@ -16,18 +16,19 @@
 
     <style>
         :root {
-            --bg-color: #030712;
-            --text-main: #f9fafb;
-            --text-muted: #9ca3af;
-            --accent-1: #4f46e5; /* Indigo */
-            --accent-2: #06b6d4; /* Cyan */
-            --accent-3: #ec4899; /* Pink */
-            --glass-bg: rgba(17, 24, 39, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --bg-color: #090d16;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-1: #10b981; /* Premium Emerald */
+            --accent-2: #0ea5e9; /* Tech Sky Blue */
+            --accent-3: #f59e0b; /* Amber Gold */
+            --glass-bg: rgba(15, 23, 42, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
         }
 
-        * { margin:0; padding:0; box-sizing:border-box; cursor: none !important; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        a, button, select, input, textarea, .hover-target { cursor: pointer; }
         
         html { scroll-behavior:smooth; }
         
@@ -57,44 +58,6 @@
             z-index: 10000;
             transition: width 0.1s ease-out;
             box-shadow: 0 0 10px var(--accent-2);
-        }
-
-        /* 2. CUSTOM CURSOR */
-        #cursor-dot {
-            position: fixed; width: 8px; height: 8px;
-            background: var(--accent-2); border-radius: 50%;
-            pointer-events: none; z-index: 99999;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 15px var(--accent-2);
-            transition: width 0.2s, height 0.2s, background 0.2s;
-        }
-
-        #cursor-outline {
-            position: fixed; width: 40px; height: 40px;
-            border: 1px solid rgba(6, 182, 212, 0.5); border-radius: 50%;
-            pointer-events: none; z-index: 99998;
-            transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s, background 0.2s, border-color 0.2s;
-        }
-
-        /* Hover states for cursor */
-        body.hovering #cursor-outline {
-            width: 60px; height: 60px;
-            background: rgba(6, 182, 212, 0.1);
-            border-color: transparent;
-            backdrop-filter: blur(2px);
-        }
-        body.hovering #cursor-dot {
-            width: 12px; height: 12px;
-            background: var(--accent-3);
-            box-shadow: 0 0 15px var(--accent-3);
-        }
-
-        /* PRO BACKGROUND CANVAS */
-        #bg-canvas {
-            position: fixed; top: 0; left: 0; 
-            width: 100vw; height: 100vh;
-            z-index: -1; pointer-events: none;
         }
 
         /* NAVBAR */
@@ -157,9 +120,13 @@
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
         }
 
-        .hero h1 { 
-            font-size: 85px; line-height: 1.1; margin-bottom: 30px; 
-            font-weight: 800; color: #ffffff; letter-spacing: -2px; 
+        .hero-title { 
+            font-size: 80px; line-height: 1.15; margin-bottom: 25px; 
+            font-weight: 900; color: #ffffff; letter-spacing: -2px; 
+        }
+
+        .hero-title-sub {
+            font-family: monospace; letter-spacing: -1px; font-size: 65px; font-weight: 700;
         }
         
         .gradient-text {
@@ -179,6 +146,41 @@
         .typewriter-text { font-weight: 600; color: #ffffff; }
         .cursor-blink { font-weight: 600; color: var(--accent-2); animation: blink 0.8s infinite; }
         @keyframes blink { 50% { opacity: 0; } }
+
+        @keyframes avatarPulse {
+            0% { transform: scale(0.98); opacity: 0.5; filter: blur(5px); }
+            100% { transform: scale(1.04); opacity: 0.8; filter: blur(8px); }
+        }
+
+        @keyframes spinHUD {
+            to { transform: rotate(360deg); }
+        }
+
+        .developer-id-badge:hover .hud-ring {
+            animation-duration: 6s !important;
+            border-color: var(--accent-2) !important;
+            opacity: 0.8 !important;
+            border-style: dotted !important;
+        }
+
+        .developer-id-badge img {
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .developer-id-badge:hover img {
+            transform: scale(1.06) rotate(3deg);
+        }
+
+        .developer-id-badge {
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .developer-id-badge:hover {
+            border-color: rgba(255, 255, 255, 0.18) !important;
+            background: rgba(15, 23, 42, 0.6) !important;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55), 0 0 30px rgba(16, 185, 129, 0.12) !important;
+            transform: translateY(-2px);
+        }
 
         .hero-buttons { display: flex; gap: 20px; flex-wrap: wrap; }
 
@@ -251,75 +253,516 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 40px rgba(79, 70, 229, 0.1); 
         }
 
-        /* CIRCULAR SKILLS UI */
-        .skills-circular-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px;
+        /* 1. SPLIT HERO LAYOUT */
+        .hero-split-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 60px;
+            align-items: center;
+            width: 100%;
         }
 
-        .skill-circular-card {
-            padding: 40px 20px; display: flex; flex-direction: column;
-            align-items: center; text-align: center;
+        @media (max-width: 1024px) {
+            .hero-split-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                padding-top: 60px;
+            }
         }
 
-        .circular-progress { position: relative; width: 120px; height: 120px; margin-bottom: 25px; transform: translateZ(30px); }
-        .circular-progress svg { width: 100%; height: 100%; transform: rotate(-90deg); filter: drop-shadow(0 0 10px rgba(79, 70, 229, 0.4)); }
-        .bg-circle { fill: none; stroke: rgba(255, 255, 255, 0.05); stroke-width: 6; }
-        .progress-circle {
-            fill: none; stroke-width: 6; stroke-linecap: round;
-            stroke-dasharray: 251.2; stroke-dashoffset: 251.2;
-            transition: stroke-dashoffset 2s cubic-bezier(0.22, 1, 0.36, 1);
+        /* 2. ADVANCED MONOSPACE TERMINAL WIDGET */
+        .terminal-widget {
+            font-family: 'Outfit', 'Courier New', Courier, monospace;
+            background: rgba(8, 12, 21, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 380px;
+            text-align: left;
         }
 
-        .inner-icon {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 32px; color: #fff; background: rgba(0, 0, 0, 0.3);
-            width: 76px; height: 76px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 0 15px rgba(0,0,0,0.2);
-            transition: all 0.4s ease;
+        .terminal-header {
+            background: rgba(15, 23, 42, 0.95);
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        .skill-circular-card:hover .inner-icon {
-            background: rgba(255, 255, 255, 0.05); transform: translate(-50%, -50%) scale(1.1);
-            color: var(--accent-2); box-shadow: inset 0 0 20px rgba(79, 70, 229, 0.4), 0 0 20px rgba(6, 182, 212, 0.3);
+        .terminal-buttons {
+            display: flex;
+            gap: 8px;
         }
 
-        .skill-info h4 { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 8px; transform: translateZ(20px); }
-        .skill-info .percent-text {
-            font-size: 26px; font-weight: 800; background: linear-gradient(to right, var(--accent-1), var(--accent-2));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; transform: translateZ(20px); display: inline-block;
+        .terminal-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .btn-red { background: #ef4444; }
+        .btn-yellow { background: #eab308; }
+        .btn-green { background: #22c55e; }
+
+        .terminal-title {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-family: monospace;
+        }
+
+        .terminal-content {
+            padding: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: #10b981; /* Terminal Green */
+            font-family: monospace;
+        }
+
+        .terminal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .terminal-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .terminal-welcome {
+            color: var(--text-main);
+            margin-bottom: 12px;
+        }
+
+        .terminal-welcome span {
+            color: var(--accent-1);
+            font-weight: bold;
+        }
+
+        .terminal-log {
+            margin-bottom: 8px;
+            white-space: pre-wrap;
+        }
+
+        .terminal-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            color: var(--text-main);
+        }
+
+        .terminal-prompt {
+            color: var(--accent-1);
+            font-weight: bold;
+        }
+
+        .terminal-input-element {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 13.5px;
+            flex-grow: 1;
+            padding: 0;
+            margin: 0;
+        }
+
+        .terminal-controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(15, 23, 42, 0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-family: monospace;
+        }
+
+        .cli-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            color: var(--text-muted);
+            padding: 5px 10px;
+            font-size: 11px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cli-btn:hover {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--accent-1);
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+
+        /* 3. TECHNICAL SPECIFICATION MATRIX */
+        .skills-matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            width: 100%;
+        }
+
+        .matrix-card {
+            padding: 35px 30px;
+        }
+
+        .matrix-card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .matrix-card-header i {
+            font-size: 20px;
+            color: var(--accent-1);
+            background: rgba(16, 185, 129, 0.06);
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(16, 185, 129, 0.15);
+        }
+
+        .matrix-card-header h3 {
+            font-size: 19px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .matrix-skills-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .matrix-skill-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .matrix-skill-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13.5px;
+        }
+
+        .matrix-skill-name {
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .matrix-skill-level {
+            font-weight: 600;
+            color: var(--accent-1);
+            font-family: monospace;
+        }
+
+        .matrix-bar-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .matrix-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            width: 0%;
+            transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 0 10px var(--accent-1);
+        }
+
+        /* TIMELINE / ROADMAP */
+        .timeline-container {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .timeline-container::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--accent-1), var(--accent-2), var(--accent-3));
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -2px;
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            background-color: transparent;
+            width: 50%;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: 100%;
+            transform: translate(-50%, 0) scale(1);
+            background-color: var(--bg-color);
+            border: 4px solid var(--accent-2);
+            top: 40px;
+            border-radius: 50%;
+            z-index: 2;
+            box-shadow: 0 0 15px var(--accent-2);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .timeline-item.right::after {
+            left: 0%;
+            border-color: var(--accent-3);
+            box-shadow: 0 0 15px var(--accent-3);
+        }
+
+        .timeline-item.left:hover::after {
+            transform: translate(-50%, 0) scale(1.4);
+            background-color: #fff;
+            box-shadow: 0 0 25px var(--accent-2);
+        }
+
+        .timeline-item.right:hover::after {
+            transform: translate(-50%, 0) scale(1.4);
+            background-color: #fff;
+            box-shadow: 0 0 25px var(--accent-3);
+        }
+
+        .timeline-item.left { left: 0; }
+        .timeline-item.right { left: 50%; }
+
+        .timeline-card {
+            border: 1px solid var(--glass-border);
+            transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .timeline-item.left .timeline-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(16, 185, 129, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 25px rgba(16, 185, 129, 0.15);
+        }
+
+        .timeline-item.right .timeline-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(14, 165, 233, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 25px rgba(14, 165, 233, 0.15);
+        }
+
+        .timeline-card:hover .terminal-btn.btn-red { background: #ef4444 !important; box-shadow: 0 0 8px #ef4444; }
+        .timeline-card:hover .terminal-btn.btn-yellow { background: #f59e0b !important; box-shadow: 0 0 8px #f59e0b; }
+        .timeline-card:hover .terminal-btn.btn-green { background: #10b981 !important; box-shadow: 0 0 8px #10b981; }
+
+        .timeline-date {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-2);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+
+        .timeline-item.right .timeline-date {
+            color: var(--accent-3);
+        }
+
+        .timeline-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .timeline-card h4 {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .timeline-card p {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--text-muted);
+            font-weight: 300;
+            margin-bottom: 15px;
+        }
+
+        .timeline-achievements {
+            padding-left: 20px;
+            list-style-type: square;
+        }
+
+        .timeline-achievements li {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 300;
+            margin-bottom: 8px;
+        }
+
+        /* ROADMAP DIAGNOSTIC CONSOLE */
+        .diagnostic-console {
+            margin-top: 20px;
+            font-family: monospace;
+            background: rgba(8, 12, 21, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 12px;
+            color: #10b981; /* green */
+            text-align: left;
+            min-height: 110px;
+            max-height: 160px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .diagnostic-console.running-test {
+            border-color: rgba(16, 185, 129, 0.3) !important;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.12) !important;
+        }
+
+        .diagnostic-console::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .diagnostic-console::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        .diagnostic-btn {
+            background: rgba(16, 185, 129, 0.06);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--accent-1);
+            font-family: monospace;
+            font-size: 11.5px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .diagnostic-btn:hover {
+            background: rgba(16, 185, 129, 0.15);
+            color: #ffffff;
+            border-color: var(--accent-1);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .diagnostic-log-item {
+            white-space: pre-wrap;
+            line-height: 1.5;
+            opacity: 0;
+            transform: translateY(6px);
+            animation: logFadeIn 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes logFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .timeline-container::after {
+                left: 31px;
+            }
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            .timeline-item::after {
+                left: 31px;
+                right: auto;
+                transform: translate(-50%, 0) scale(1);
+            }
+            .timeline-item.right {
+                left: 0%;
+            }
+            .timeline-item.right::after {
+                left: 31px;
+                right: auto;
+                transform: translate(-50%, 0) scale(1);
+            }
         }
 
         /* PROJECTS */
         .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px; }
         
-        .project-card { padding: 0; display: flex; flex-direction: column; }
-        
-        /* 3. ANIMATED GRADIENT MESH IMAGES */
-        @keyframes gradientMesh {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .project-card { 
+            padding: 0; 
+            display: flex; 
+            flex-direction: column; 
+            border: 1px solid var(--glass-border);
+            transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
+        .project-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(16, 185, 129, 0.35);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45), 0 0 30px rgba(16, 185, 129, 0.15);
+        }
+
+        .project-card:hover .terminal-btn.btn-red { background: #ef4444 !important; box-shadow: 0 0 8px #ef4444; }
+        .project-card:hover .terminal-btn.btn-yellow { background: #f59e0b !important; box-shadow: 0 0 8px #f59e0b; }
+        .project-card:hover .terminal-btn.btn-green { background: #10b981 !important; box-shadow: 0 0 8px #10b981; }
+        
+        /* STATIC GRADIENT MESH IMAGES */
         .project-image-placeholder { 
             height: 240px; 
             border-bottom: 1px solid var(--glass-border);
             display: flex; align-items: center; justify-content: center; 
-            font-size: 60px; color: rgba(255,255,255,0.7);
+            font-size: 60px; color: rgba(255,255,255,0.85);
             position: relative; overflow: hidden;
-            /* The gradient mesh background */
-            background: linear-gradient(-45deg, #4f46e5, #0ea5e9, #8b5cf6, #3b82f6);
-            background-size: 400% 400%;
-            animation: gradientMesh 12s ease infinite;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.4) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
             transform: translateZ(30px);
+            transition: all 0.5s ease;
         }
         
         /* Different gradient for second project */
         .mesh-2 {
-            background: linear-gradient(-45deg, #10b981, #06b6d4, #f59e0b, #ec4899);
-            background-size: 400% 400%;
-            animation: gradientMesh 15s ease infinite alternate;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.4) 0%, rgba(15, 23, 42, 0.95) 100%);
+        }
+        
+        /* Different gradient for third project */
+        .mesh-3 {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.4) 0%, rgba(15, 23, 42, 0.95) 100%);
         }
         
         .project-image-placeholder::after {
@@ -343,7 +786,7 @@
             border: 1px solid var(--glass-border); transition: all 0.3s ease;
         }
         .project-card:hover .tech-tags span {
-            background: rgba(79, 70, 229, 0.15); border-color: rgba(79, 70, 229, 0.3); color: #c7d2fe;
+            background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #a7f3d0;
         }
 
         /* STATS */
@@ -355,9 +798,15 @@
         
         /* 5. GLASSMORPHIC CONTACT FORM */
         .contact-container {
-            max-width: 900px; margin: auto; padding: 60px;
-            display: grid; grid-template-columns: 1fr 1fr; gap: 50px;
+            max-width: 900px; margin: auto;
             background: linear-gradient(180deg, rgba(17, 24, 39, 0.6) 0%, rgba(3, 7, 18, 0.8) 100%);
+        }
+        
+        .contact-grid-wrap {
+            padding: 60px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
         }
         
         .contact-text h2 { font-size: 42px; font-weight: 800; margin-bottom: 20px; color: #fff; letter-spacing: -1px; }
@@ -410,155 +859,477 @@
         }
         
         @media(max-width: 900px) {
-            .contact-container { grid-template-columns: 1fr; padding: 40px 30px; }
-            .hero h1 { font-size: 52px; } .hero { padding-top: 150px; }
+            .contact-container { padding: 0; }
+            .contact-grid-wrap { grid-template-columns: 1fr; padding: 40px 30px; }
+            .hero-title { font-size: 48px; }
+            .hero-title-sub { font-size: 38px; }
+            .hero { padding-top: 150px; }
             .nav-links { display: none; }
+            .nav-telemetry { display: none !important; }
         }
+
+        .hero-role-slider{
+            height:70px;
+            overflow:hidden;
+            position:relative;
+            margin-bottom:50px;
+        }
+
+        .role-track{
+            display:flex;
+            flex-direction:column;
+            animation:slideRoles 12s infinite;
+        }
+
+        .role-item{
+            height:70px;
+            display:flex;
+            align-items:center;
+            gap:16px;
+            font-size:22px;
+            font-weight:500;
+            color:#dbeafe;
+        }
+
+        .role-item i{
+            width:52px;
+            height:52px;
+            border-radius:16px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:rgba(255,255,255,.06);
+            border:1px solid rgba(255,255,255,.08);
+            color:var(--accent-2);
+            box-shadow:
+                0 0 20px rgba(6,182,212,.15),
+                inset 0 0 20px rgba(255,255,255,.03);
+        }
+
+        @keyframes slideRoles{
+
+            0%{
+                transform:translateY(0);
+            }
+
+            20%{
+                transform:translateY(0);
+            }
+
+            25%{
+                transform:translateY(-70px);
+            }
+
+            45%{
+                transform:translateY(-70px);
+            }
+
+            50%{
+                transform:translateY(-140px);
+            }
+
+            70%{
+                transform:translateY(-140px);
+            }
+
+            75%{
+                transform:translateY(-210px);
+            }
+
+            95%{
+                transform:translateY(-210px);
+            }
+
+            100%{
+                transform:translateY(0);
+            }
+        }
+
+        /* =========================
+        BACKGROUND SYSTEM
+        ========================= */
+        .bg-wrapper{
+            position:fixed;
+            inset:0;
+            overflow:hidden;
+            z-index:-2;
+            background: var(--bg-color);
+        }
+
+        /* Grid Overlay */
+
+        .grid-overlay{
+            position:absolute;
+            inset:0;
+            background-image:
+                linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+            background-size:80px 80px;
+            mask-image:radial-gradient(circle at center, black 30%, transparent 90%);
+        }
+
+        /* Noise Texture */
+
+        .noise-overlay{
+            position:absolute;
+            inset:0;
+            opacity:.04;
+            background-image:
+                url("https://grainy-gradients.vercel.app/noise.svg");
+            mix-blend-mode:soft-light;
+        }
+
+
     </style>
 </head>
 <body>
-
     <!-- 1. SCROLL PROGRESS BAR -->
     <div id="scroll-progress"></div>
-
     <!-- 2. CUSTOM CURSOR -->
-    <div id="cursor-dot"></div>
-    <div id="cursor-outline"></div>
-
-    <canvas id="bg-canvas"></canvas>
+    <div class="bg-wrapper">
+        <div class="grid-overlay"></div>
+        <div class="noise-overlay"></div>
+    </div>
 
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <div class="logo">Surya Prakash</div>
+            <div class="logo" style="font-family: monospace; font-size: 19px; letter-spacing: 0px; font-weight: 700; color: #fff;">
+                <span style="color: var(--accent-1);">suryaprakash</span>@console:~$<span class="cursor-blink" style="color: var(--accent-1);">_</span>
+            </div>
             <div class="nav-links">
-                <a href="#skills" class="hover-target">Expertise</a>
-                <a href="#projects" class="hover-target">Work</a>
-                <a href="#stats" class="hover-target">Impact</a>
-                <a href="#contact" class="hover-target">Contact</a>
+                <a href="#skills" class="hover-target" style="font-family: monospace;">[expertise.cfg]</a>
+                <a href="#experience" class="hover-target" style="font-family: monospace;">[roadmap.log]</a>
+                <a href="#projects" class="hover-target" style="font-family: monospace;">[work.app]</a>
+                <a href="#stats" class="hover-target" style="font-family: monospace;">[impact.json]</a>
+                <a href="#contact" class="hover-target" style="font-family: monospace;">[contact.sh]</a>
+            </div>
+            <div class="nav-telemetry" style="font-family: monospace; font-size: 11px; color: var(--accent-1); display: flex; align-items: center; gap: 8px;">
+                <div class="pulse-dot" style="width: 6px; height: 6px; background-color: var(--accent-1);"></div>
+                <span>PING: 0.12ms</span>
             </div>
         </div>
     </nav>
 
     <section class="hero">
-        <div class="hero-content" data-aos="fade-up" data-aos-duration="1200">
-            <div class="hero-badge">
-                <div class="pulse-dot"></div>
-                Available for new opportunities
+        <div class="hero-split-grid">
+            <div class="hero-content" data-aos="fade-up" data-aos-duration="1200">
+                <!-- Advanced Glassmorphic ID Badge Panel -->
+                <div class="developer-id-badge" style="display: inline-flex; align-items: center; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px 24px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05); margin-bottom: 30px; position: relative; overflow: visible;">
+                    
+                    <!-- Glowing Interactive Glassmorphic Profile Avatar -->
+                    <div class="hero-avatar-wrapper" style="position: relative; display: flex; align-items: center; justify-content: center; width: 75px; height: 75px;">
+                        <div class="avatar-glow" style="position: absolute; inset: -4px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); opacity: 0.55; filter: blur(6px); animation: avatarPulse 3s infinite alternate;"></div>
+                        <div class="hud-ring" style="position: absolute; inset: -8px; border: 1px dashed var(--accent-1); border-radius: 50%; animation: spinHUD 20s linear infinite; opacity: 0.4; pointer-events: none;"></div>
+                        <div style="position: relative; width: 75px; height: 75px; border-radius: 50%; padding: 3px; background: linear-gradient(135deg, var(--accent-1), var(--accent-2), var(--accent-3)); box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);">
+                            <img src="suryaprakash.jpg" alt="Surya Prakash" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 2px solid #080c15;" />
+                        </div>
+                    </div>
+
+                    <!-- Telemetry Divider Line -->
+                    <div style="width: 1px; background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.15), transparent); height: 50px; margin: 0 22px;"></div>
+
+                    <!-- Monospaced Telemetry Credentials -->
+                    <div style="display: flex; flex-direction: column; gap: 4px; text-align: left; font-family: monospace;">
+                        <div style="font-size: 10px; color: var(--accent-1); letter-spacing: 1.5px; font-weight: 700; text-transform: uppercase;">[CODE_SIGNATURE: SURYA]</div>
+                        <div style="font-size: 14px; color: #ffffff; font-weight: 700; letter-spacing: -0.5px;">Surya Prakash</div>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                            <div class="pulse-dot" style="width: 6px; height: 6px; background-color: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981;"></div>
+                            <span style="color: #a7f3d0; font-weight: 600;">ACTIVE_OPPORTUNITIES</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Telemetry Status Bar -->
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; font-family: monospace; font-size: 11px; margin-bottom: 20px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;">
+                    <span style="color: var(--accent-1); font-weight: 700;">[SYS_STATUS: ACTIVE]</span>
+                    <span style="opacity: 0.3;">//</span>
+                    <span style="color: var(--accent-2); font-weight: 700;">[LATENCY: 0.12ms]</span>
+                    <span style="opacity: 0.3;">//</span>
+                    <span style="color: var(--accent-3); font-weight: 700;">[STACK: ES6/CANVAS]</span>
+                </div>
+
+                <h1 class="hero-title">
+                    Frontend Engineering<br>
+                    <span class="gradient-text hero-title-sub">
+                        &lt;Precision_Built /&gt;
+                    </span>
+                </h1>
+                
+                <p style="margin-top: 15px; margin-bottom: 40px; font-size: 19px; line-height: 1.8; color: var(--text-muted); font-weight: 300;">Architecting modular administrative consoles, high-fidelity data dashboards, and responsive game management interfaces with zero latency.</p>
+                <div class="hero-buttons">
+                    <a href="#projects" class="btn btn-primary hover-target">Explore Work <i class="fa fa-arrow-right"></i></a>
+                    <a href="#contact" class="btn btn-outline hover-target">Get in Touch</a>
+                </div>
             </div>
-            <h1>Frontend Engineering<br><span class="gradient-text">Reimagined.</span></h1>
             
-            <!-- 3. TYPEWRITER EFFECT -->
-            <p>I architect <span class="typewriter-text" id="typewriter"></span><span class="cursor-blink">|</span></p>
-            
-            <div class="hero-buttons">
-                <a href="#projects" class="btn btn-primary hover-target">Explore Work <i class="fa fa-arrow-right"></i></a>
-                <a href="#contact" class="btn btn-outline hover-target">Get in Touch</a>
+            <!-- Terminal Console Widget -->
+            <div class="terminal-widget" data-aos="fade-left" data-aos-duration="1200">
+                <div class="terminal-header">
+                    <div class="terminal-buttons">
+                        <div class="terminal-btn btn-red"></div>
+                        <div class="terminal-btn btn-yellow"></div>
+                        <div class="terminal-btn btn-green"></div>
+                    </div>
+                    <div class="terminal-title">surya@prakash: ~</div>
+                </div>
+                <div class="terminal-content" id="terminal-screen">
+                    <div class="terminal-welcome">Welcome to Surya's Developer Console v1.4.0.</div>
+                    <div class="terminal-log">Type <span style="color:var(--accent-1); font-weight:bold;">help</span> to see available commands or click quick actions.</div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">surya@prakash:~$</span>
+                        <input type="text" class="terminal-input-element" id="terminal-input" placeholder="Type a command..." autocomplete="off" />
+                    </div>
+                </div>
+                <div class="terminal-controls-row">
+                    <button class="cli-btn" onclick="runCLICommand('help')">run help</button>
+                    <button class="cli-btn" onclick="runCLICommand('skills')">show skills</button>
+                    <button class="cli-btn" onclick="runCLICommand('projects')">list projects</button>
+                    <button class="cli-btn" onclick="runCLICommand('contact')">get contact</button>
+                    <button class="cli-btn" onclick="runCLICommand('clear')">clear console</button>
+                </div>
             </div>
         </div>
     </section>
-
     <section id="skills">
         <div class="section-header" data-aos="fade-up">
             <span class="section-tag">Capabilities</span>
             <div class="section-title">
-                <h2>Technical Arsenal</h2>
-                <p>Mastering modern web technologies to build enterprise-grade applications.</p>
+                <h2>Technical Architecture Matrix</h2>
+                <p>Spec-sheet detailing frontend system design, state management, and real-time data orchestration capabilities.</p>
             </div>
         </div>
-
-        <svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
-            <defs>
-                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4f46e5" /><stop offset="100%" stop-color="#06b6d4" /></linearGradient>
-                <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#eab308" /><stop offset="100%" stop-color="#f97316" /></linearGradient>
-                <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0ea5e9" /><stop offset="100%" stop-color="#6366f1" /></linearGradient>
-                <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8b5cf6" /><stop offset="100%" stop-color="#d946ef" /></linearGradient>
-                <linearGradient id="grad5" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#10b981" /><stop offset="100%" stop-color="#14b8a6" /></linearGradient>
-                <linearGradient id="grad6" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f43f5e" /><stop offset="100%" stop-color="#ec4899" /></linearGradient>
-            </defs>
-        </svg>
-
-        <div class="skills-circular-grid">
-            <div class="glass-card skill-circular-card" data-aos="fade-up" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.2">
-                <div class="circular-progress" data-percent="95">
-                    <svg viewBox="0 0 100 100">
-                        <circle class="bg-circle" cx="50" cy="50" r="40"></circle>
-                        <circle class="progress-circle" cx="50" cy="50" r="40" stroke="url(#grad1)"></circle>
-                    </svg>
-                    <div class="inner-icon"><i class="fa fa-html5"></i></div>
+        
+        <div class="skills-matrix-grid">
+            <!-- UI & Layout Engineering -->
+            <div class="glass-card matrix-card" data-aos="fade-up" style="padding: 0;">
+                <div class="terminal-header" style="border-top-left-radius: 24px; border-top-right-radius: 24px; background: rgba(15, 23, 42, 0.95);">
+                    <div class="terminal-buttons">
+                        <div class="terminal-btn btn-red"></div>
+                        <div class="terminal-btn btn-yellow"></div>
+                        <div class="terminal-btn btn-green"></div>
+                    </div>
+                    <div class="terminal-title" style="font-family: monospace; font-size: 12px;">layout_systems.sh</div>
                 </div>
-                <div class="skill-info">
-                    <h4>HTML5 / CSS3</h4>
-                    <span class="percent-text" data-target="95">0%</span>
-                </div>
-            </div>
-
-            <div class="glass-card skill-circular-card" data-aos="fade-up" data-aos-delay="100" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.2">
-                <div class="circular-progress" data-percent="92">
-                    <svg viewBox="0 0 100 100">
-                        <circle class="bg-circle" cx="50" cy="50" r="40"></circle>
-                        <circle class="progress-circle" cx="50" cy="50" r="40" stroke="url(#grad2)"></circle>
-                    </svg>
-                    <div class="inner-icon"><i class="fa fa-code"></i></div>
-                </div>
-                <div class="skill-info">
-                    <h4>JavaScript (ES6+)</h4>
-                    <span class="percent-text" data-target="92">0%</span>
-                </div>
-            </div>
-
-            <div class="glass-card skill-circular-card" data-aos="fade-up" data-aos-delay="200" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.2">
-                <div class="circular-progress" data-percent="88">
-                    <svg viewBox="0 0 100 100">
-                        <circle class="bg-circle" cx="50" cy="50" r="40"></circle>
-                        <circle class="progress-circle" cx="50" cy="50" r="40" stroke="url(#grad3)"></circle>
-                    </svg>
-                    <div class="inner-icon"><i class="fa fa-cogs"></i></div>
-                </div>
-                <div class="skill-info">
-                    <h4>React JS Ecosystem</h4>
-                    <span class="percent-text" data-target="88">0%</span>
+                <div style="padding: 35px 30px;">
+                    <div class="matrix-card-header">
+                        <i class="fa fa-code"></i>
+                        <h3>UI & Layout Systems</h3>
+                    </div>
+                    <div class="matrix-skills-list">
+                        <div class="matrix-skill-item">
+                            <div class="matrix-skill-info">
+                                <span class="matrix-skill-name">Semantic HTML5 / Flexbox & CSS Grid</span>
+                                <span class="matrix-skill-level">95%</span>
+                            </div>
+                            <div class="matrix-bar-container">
+                                <div class="matrix-bar-fill" data-percent="95"></div>
+                            </div>
+                        </div>
+                        <div class="matrix-skill-item">
+                            <div class="matrix-skill-info">
+                                <span class="matrix-skill-name">Modular UI Systems & Component Design</span>
+                                <span class="matrix-skill-level">94%</span>
+                            </div>
+                            <div class="matrix-bar-container">
+                                <div class="matrix-bar-fill" data-percent="94"></div>
+                            </div>
+                        </div>
+                        <div class="matrix-skill-item">
+                            <div class="matrix-skill-info">
+                                <span class="matrix-skill-name">Responsive Console Layouts</span>
+                                <span class="matrix-skill-level">90%</span>
+                            </div>
+                            <div class="matrix-bar-container">
+                                <div class="matrix-bar-fill" data-percent="90"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="glass-card skill-circular-card" data-aos="fade-up" data-aos-delay="300" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.2">
-                <div class="circular-progress" data-percent="90">
-                    <svg viewBox="0 0 100 100">
-                        <circle class="bg-circle" cx="50" cy="50" r="40"></circle>
-                        <circle class="progress-circle" cx="50" cy="50" r="40" stroke="url(#grad4)"></circle>
-                    </svg>
-                    <div class="inner-icon"><i class="fa fa-cubes"></i></div>
+            <!-- Core Logic & Architecture -->
+            <div class="glass-card matrix-card" data-aos="fade-up" data-aos-delay="100" style="padding: 0;">
+                <div class="terminal-header" style="border-top-left-radius: 24px; border-top-right-radius: 24px; background: rgba(15, 23, 42, 0.95);">
+                    <div class="terminal-buttons">
+                        <div class="terminal-btn btn-red"></div>
+                        <div class="terminal-btn btn-yellow"></div>
+                        <div class="terminal-btn btn-green"></div>
+                    </div>
+                    <div class="terminal-title" style="font-family: monospace; font-size: 12px;">state_logic.json</div>
                 </div>
-                <div class="skill-info">
-                    <h4>UI Frameworks</h4>
-                    <span class="percent-text" data-target="90">0%</span>
+                <div style="padding: 35px 30px;">
+                    <div class="matrix-card-header">
+                        <i class="fa fa-cubes"></i>
+                        <h3>State & Core Logic</h3>
+                    </div>
+                    <div class="matrix-skills-list">
+                        <div class="matrix-skill-item">
+                            <div class="matrix-skill-info">
+                                <span class="matrix-skill-name">JavaScript (ES6+) & Custom DOM Bindings</span>
+                                <span class="matrix-skill-level">92%</span>
+                            </div>
+                            <div class="matrix-bar-container">
+                                <div class="matrix-bar-fill" data-percent="92"></div>
+                            </div>
+                        </div>
+                        <div class="matrix-skill-item">
+                            <div class="matrix-skill-info">
+                                <span class="matrix-skill-name">React Ecosystem / Context & Reducers</span>
+                                <span class="matrix-skill-level">88%</span>
+                            </div>
+                            <div class="matrix-bar-container">
+                                <div class="matrix-bar-fill" data-percent="88"></div>
+                            </div>
+                        </div>
+                        <div class="matrix-skill-item">
+                            <div class="matrix-skill-info">
+                                <span class="matrix-skill-name">Dynamic Modals & Payload Handlers</span>
+                                <span class="matrix-skill-level">93%</span>
+                            </div>
+                            <div class="matrix-bar-container">
+                                <div class="matrix-bar-fill" data-percent="93"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="glass-card skill-circular-card" data-aos="fade-up" data-aos-delay="400" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.2">
-                <div class="circular-progress" data-percent="85">
-                    <svg viewBox="0 0 100 100">
-                        <circle class="bg-circle" cx="50" cy="50" r="40"></circle>
-                        <circle class="progress-circle" cx="50" cy="50" r="40" stroke="url(#grad5)"></circle>
-                    </svg>
-                    <div class="inner-icon"><i class="fa fa-pie-chart"></i></div>
+            <!-- Visualization & Speed -->
+            <div class="glass-card matrix-card" data-aos="fade-up" data-aos-delay="200" style="padding: 0;">
+                <div class="terminal-header" style="border-top-left-radius: 24px; border-top-right-radius: 24px; background: rgba(15, 23, 42, 0.95);">
+                    <div class="terminal-buttons">
+                        <div class="terminal-btn btn-red"></div>
+                        <div class="terminal-btn btn-yellow"></div>
+                        <div class="terminal-btn btn-green"></div>
+                    </div>
+                    <div class="terminal-title" style="font-family: monospace; font-size: 12px;">orchestration.cfg</div>
                 </div>
-                <div class="skill-info">
-                    <h4>ECharts / D3.js</h4>
-                    <span class="percent-text" data-target="85">0%</span>
+                <div style="padding: 35px 30px;">
+                    <div class="matrix-card-header">
+                        <i class="fa fa-line-chart"></i>
+                        <h3>Data Orchestration</h3>
+                    </div>
+                    <div class="matrix-skills-list">
+                        <div class="matrix-skill-item">
+                            <div class="matrix-skill-info">
+                                <span class="matrix-skill-name">ECharts / D3.js Analytical Displays</span>
+                                <span class="matrix-skill-level">85%</span>
+                            </div>
+                            <div class="matrix-bar-container">
+                                <div class="matrix-bar-fill" data-percent="85"></div>
+                            </div>
+                        </div>
+                        <div class="matrix-skill-item">
+                            <div class="matrix-skill-info">
+                                <span class="matrix-skill-name">Performance Optimization & DOM Latency</span>
+                                <span class="matrix-skill-level">91%</span>
+                            </div>
+                            <div class="matrix-bar-container">
+                                <div class="matrix-bar-fill" data-percent="91"></div>
+                            </div>
+                        </div>
+                        <div class="matrix-skill-item">
+                            <div class="matrix-skill-info">
+                                <span class="matrix-skill-name">Canvas API / Interactive Visuals</span>
+                                <span class="matrix-skill-level">89%</span>
+                            </div>
+                            <div class="matrix-bar-container">
+                                <div class="matrix-bar-fill" data-percent="89"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="experience">
+        <div class="section-header" data-aos="fade-up">
+            <span class="section-tag">Professional Roadmap</span>
+            <div class="section-title">
+                <h2>Technical Leadership & Experience</h2>
+                <p>A history of engineering pixel-perfect solutions and high-performing client architectures.</p>
+            </div>
+        </div>
+        <div class="timeline-container">
+            <!-- 1. Senior Frontend Architect -->
+            <div class="timeline-item left" data-aos="fade-right">
+                <div class="glass-card timeline-card" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2" style="padding: 0; overflow: hidden;">
+                    <div class="terminal-header" style="background: rgba(15, 23, 42, 0.95); padding: 10px 15px;">
+                        <div class="terminal-buttons">
+                            <div class="terminal-btn btn-red"></div>
+                            <div class="terminal-btn btn-yellow"></div>
+                            <div class="terminal-btn btn-green"></div>
+                        </div>
+                        <div class="terminal-title" style="font-family: monospace; font-size: 11px;">senior_architect.log</div>
+                    </div>
+                    <div style="padding: 25px;">
+                        <span class="timeline-date">2024 - Present</span>
+                        <div style="font-family: monospace; font-size: 12px; color: var(--accent-1); margin-bottom: 10px;">[COMMIT: ui-sys-arch-98f]</div>
+                        <h3>Senior Frontend Architect</h3>
+                        <h4>United Interactive Engg.</h4>
+                        <p>Spearheaded modernization of high-throughput client-facing administrative consoles and responsive dashboards. Designed reusable micro-frontend design systems with glassmorphic cards and dynamic topology canvas networks.</p>
+                        
+                        <div class="diagnostic-console" id="diag-console-1">
+                            <div class="diagnostic-log-item" style="color: var(--text-muted);">$ cat united_interactive_parities.cfg</div>
+                            <div class="diagnostic-log-item" style="color: var(--accent-1);">> Diagnostic mode idle. Press the trigger below.</div>
+                        </div>
+                        <button class="diagnostic-btn" onclick="startRoadmapDiagnostic(1, this)"><i class="fa fa-terminal"></i> run diagnostic</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="glass-card skill-circular-card" data-aos="fade-up" data-aos-delay="500" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.2">
-                <div class="circular-progress" data-percent="94">
-                    <svg viewBox="0 0 100 100">
-                        <circle class="bg-circle" cx="50" cy="50" r="40"></circle>
-                        <circle class="progress-circle" cx="50" cy="50" r="40" stroke="url(#grad6)"></circle>
-                    </svg>
-                    <div class="inner-icon"><i class="fa fa-paint-brush"></i></div>
+            <!-- 2. UI Technical Lead -->
+            <div class="timeline-item right" data-aos="fade-left">
+                <div class="glass-card timeline-card" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2" style="padding: 0; overflow: hidden;">
+                    <div class="terminal-header" style="background: rgba(15, 23, 42, 0.95); padding: 10px 15px;">
+                        <div class="terminal-buttons">
+                            <div class="terminal-btn btn-red"></div>
+                            <div class="terminal-btn btn-yellow"></div>
+                            <div class="terminal-btn btn-green"></div>
+                        </div>
+                        <div class="terminal-title" style="font-family: monospace; font-size: 11px;">ui_tech_lead.log</div>
+                    </div>
+                    <div style="padding: 25px;">
+                        <span class="timeline-date">2022 - 2024</span>
+                        <div style="font-family: monospace; font-size: 12px; color: var(--accent-2); margin-bottom: 10px;">[COMMIT: audio-media-77b]</div>
+                        <h3>UI Technical Lead</h3>
+                        <h4>PixelForge Studios</h4>
+                        <p>Designed immersive web audio/video engines and full compliance admin consoles. Created high-performing custom components with jQuery, HTML5 canvas, and CSS3 micro-animations.</p>
+                        
+                        <div class="diagnostic-console" id="diag-console-2">
+                            <div class="diagnostic-log-item" style="color: var(--text-muted);">$ cat pixelforge_media_engine.cfg</div>
+                            <div class="diagnostic-log-item" style="color: var(--accent-2);">> Diagnostic mode idle. Press the trigger below.</div>
+                        </div>
+                        <button class="diagnostic-btn" onclick="startRoadmapDiagnostic(2, this)"><i class="fa fa-terminal"></i> run diagnostic</button>
+                    </div>
                 </div>
-                <div class="skill-info">
-                    <h4>UI Architecture</h4>
-                    <span class="percent-text" data-target="94">0%</span>
+            </div>
+
+            <!-- 3. Frontend Engineer -->
+            <div class="timeline-item left" data-aos="fade-right">
+                <div class="glass-card timeline-card" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2" style="padding: 0; overflow: hidden;">
+                    <div class="terminal-header" style="background: rgba(15, 23, 42, 0.95); padding: 10px 15px;">
+                        <div class="terminal-buttons">
+                            <div class="terminal-btn btn-red"></div>
+                            <div class="terminal-btn btn-yellow"></div>
+                            <div class="terminal-btn btn-green"></div>
+                        </div>
+                        <div class="terminal-title" style="font-family: monospace; font-size: 11px;">frontend_engineer.log</div>
+                    </div>
+                    <div style="padding: 25px;">
+                        <span class="timeline-date">2020 - 2022</span>
+                        <div style="font-family: monospace; font-size: 12px; color: var(--accent-1); margin-bottom: 10px;">[COMMIT: core-dashboard-10c]</div>
+                        <h3>Frontend Engineer</h3>
+                        <h4>NexTech Solutions</h4>
+                        <p>Developed responsive enterprise dashboard frameworks, dynamic charts utilizing ECharts and D3.js, and refined UI styling pipelines.</p>
+                        
+                        <div class="diagnostic-console" id="diag-console-3">
+                            <div class="diagnostic-log-item" style="color: var(--text-muted);">$ cat nextech_visualizations.cfg</div>
+                            <div class="diagnostic-log-item" style="color: var(--accent-1);">> Diagnostic mode idle. Press the trigger below.</div>
+                        </div>
+                        <button class="diagnostic-btn" onclick="startRoadmapDiagnostic(3, this)"><i class="fa fa-terminal"></i> run diagnostic</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -572,95 +1343,213 @@
                 <p>Architecting scalable solutions with an uncompromising focus on user experience.</p>
             </div>
         </div>
-
         <div class="projects-grid">
             <div class="glass-card project-card hover-target" data-aos="fade-up" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.3">
-                <div class="project-image-placeholder"><i class="fa fa-play"></i></div>
-                <div class="project-content">
+                <div class="terminal-header" style="border-top-left-radius: 24px; border-top-right-radius: 24px; background: rgba(15, 23, 42, 0.95);">
+                    <div class="terminal-buttons">
+                        <div class="terminal-btn btn-red"></div>
+                        <div class="terminal-btn btn-yellow"></div>
+                        <div class="terminal-btn btn-green"></div>
+                    </div>
+                    <div class="terminal-title" style="font-family: monospace; font-size: 12px;">cloud_muez.app</div>
+                </div>
+                <div class="project-image-placeholder" style="border-top-left-radius: 0; border-top-right-radius: 0;"><i class="fa fa-play"></i></div>
+                <div class="project-content" style="display: flex; flex-direction: column; flex-grow: 1;">
                     <h3>Cloud Muez Platform</h3>
                     <p>Engineered a comprehensive custom media player with an immersive visual interface, smooth playback interactions, and optimized DOM rendering for high performance.</p>
-                    <div class="tech-tags">
+                    <div class="tech-tags" style="margin-bottom: 15px;">
                         <span>Vanilla JS</span><span>HTML5 Canvas</span><span>CSS3 Animations</span>
                     </div>
+                    
+                    <div class="diagnostic-console" id="project-console-1" style="min-height: 80px; max-height: 120px; font-size: 11px; margin-top: auto;">
+                        <div class="diagnostic-log-item" style="color: var(--text-muted);">$ ./test-suite --audio-core</div>
+                        <div class="diagnostic-log-item" style="color: var(--accent-1);">> Playback diagnostic idle. Press trigger below.</div>
+                    </div>
+                    <button class="diagnostic-btn" onclick="startProjectDiagnostic(1, this)" style="margin-top: 10px; width: 100%; justify-content: center;"><i class="fa fa-play-circle"></i> run deployment test suite</button>
                 </div>
             </div>
-
             <div class="glass-card project-card hover-target" data-aos="fade-up" data-aos-delay="150" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.3">
-                <div class="project-image-placeholder mesh-2"><i class="fa fa-shield"></i></div>
-                <div class="project-content">
+                <div class="terminal-header" style="border-top-left-radius: 24px; border-top-right-radius: 24px; background: rgba(15, 23, 42, 0.95);">
+                    <div class="terminal-buttons">
+                        <div class="terminal-btn btn-red"></div>
+                        <div class="terminal-btn btn-yellow"></div>
+                        <div class="terminal-btn btn-green"></div>
+                    </div>
+                    <div class="terminal-title" style="font-family: monospace; font-size: 12px;">admin_console.sh</div>
+                </div>
+                <div class="project-image-placeholder mesh-2" style="border-top-left-radius: 0; border-top-right-radius: 0;"><i class="fa fa-shield"></i></div>
+                <div class="project-content" style="display: flex; flex-direction: column; flex-grow: 1;">
                     <h3>Enterprise Admin Console</h3>
                     <p>Developed an extensive compliance and administration interface featuring complex search panels, real-time data visualization, and scalable dynamic structural templates.</p>
-                    <div class="tech-tags">
+                    <div class="tech-tags" style="margin-bottom: 15px;">
                         <span>jQuery / AJAX</span><span>ECharts Integrations</span><span>Bootstrap Grid</span>
                     </div>
+                    
+                    <div class="diagnostic-console" id="project-console-2" style="min-height: 80px; max-height: 120px; font-size: 11px; margin-top: auto;">
+                        <div class="diagnostic-log-item" style="color: var(--text-muted);">$ ./test-suite --admin-core</div>
+                        <div class="diagnostic-log-item" style="color: var(--accent-2);">> Interface diagnostic idle. Press trigger below.</div>
+                    </div>
+                    <button class="diagnostic-btn" onclick="startProjectDiagnostic(2, this)" style="margin-top: 10px; width: 100%; justify-content: center;"><i class="fa fa-play-circle"></i> run deployment test suite</button>
+                </div>
+            </div>
+            <div class="glass-card project-card hover-target" data-aos="fade-up" data-aos-delay="300" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.3">
+                <div class="terminal-header" style="border-top-left-radius: 24px; border-top-right-radius: 24px; background: rgba(15, 23, 42, 0.95);">
+                    <div class="terminal-buttons">
+                        <div class="terminal-btn btn-red"></div>
+                        <div class="terminal-btn btn-yellow"></div>
+                        <div class="terminal-btn btn-green"></div>
+                    </div>
+                    <div class="terminal-title" style="font-family: monospace; font-size: 12px;">defi_dashboard.jsx</div>
+                </div>
+                <div class="project-image-placeholder mesh-3" style="border-top-left-radius: 0; border-top-right-radius: 0;"><i class="fa fa-cubes"></i></div>
+                <div class="project-content" style="display: flex; flex-direction: column; flex-grow: 1;">
+                    <h3>Aether DeFi Dashboard</h3>
+                    <p>Designed a decentralized finance dashboard with highly animated, real-time trading charts, customizable grid layouts, and unified wallet integration protocols.</p>
+                    <div class="tech-tags" style="margin-bottom: 15px;">
+                        <span>React Ecosystem</span><span>Chart.js / SVG</span><span>WebSocket API</span>
+                    </div>
+                    
+                    <div class="diagnostic-console" id="project-console-3" style="min-height: 80px; max-height: 120px; font-size: 11px; margin-top: auto;">
+                        <div class="diagnostic-log-item" style="color: var(--text-muted);">$ ./test-suite --defi-ws</div>
+                        <div class="diagnostic-log-item" style="color: var(--accent-1);">> WebSocket diagnostic idle. Press trigger below.</div>
+                    </div>
+                    <button class="diagnostic-btn" onclick="startProjectDiagnostic(3, this)" style="margin-top: 10px; width: 100%; justify-content: center;"><i class="fa fa-play-circle"></i> run deployment test suite</button>
                 </div>
             </div>
         </div>
     </section>
-
     <section id="stats">
         <div class="stats-grid">
-            <div class="glass-card stat-card" data-aos="zoom-in" data-aos-delay="0" data-tilt data-tilt-scale="1.05">
-                <h3>25+</h3>
-                <p>Projects Deployed</p>
+            <!-- Stat 1: Deployments -->
+            <div class="glass-card stat-card" data-aos="zoom-in" data-aos-delay="0" data-tilt data-tilt-scale="1.05" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+                <div class="terminal-header" style="background: rgba(15, 23, 42, 0.95); padding: 8px 15px;">
+                    <div class="terminal-buttons">
+                        <div class="terminal-btn btn-red"></div>
+                        <div class="terminal-btn btn-yellow"></div>
+                        <div class="terminal-btn btn-green"></div>
+                    </div>
+                    <div class="terminal-title" style="font-family: monospace; font-size: 11px;">deployments_audit.log</div>
+                </div>
+                <div style="padding: 30px; display: flex; flex-direction: column; flex-grow: 1;">
+                    <h3 style="margin-bottom: 5px;">25+</h3>
+                    <p style="margin-bottom: 15px;">Projects Deployed</p>
+                    
+                    <div style="font-family: monospace; font-size: 11px; color: var(--text-muted); text-align: left; display: flex; flex-direction: column; gap: 4px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                        <div><span style="color: var(--accent-1);">STATUS:</span> PRODUCTION</div>
+                        <div><span style="color: var(--accent-1);">CHECKSUM:</span> PASSED</div>
+                        <div><span style="color: var(--accent-1);">UPTIME:</span> 99.98%</div>
+                    </div>
+                    
+                    <svg viewBox="0 0 100 30" style="width: 100%; height: 35px; margin-top: 20px; stroke: #10b981; stroke-width: 1.5; fill: none; opacity: 0.8; filter: drop-shadow(0 0 4px #10b981);">
+                        <path d="M0,25 Q15,5 30,20 T60,5 T90,20 L100,10"></path>
+                    </svg>
+                </div>
             </div>
-            <div class="glass-card stat-card" data-aos="zoom-in" data-aos-delay="150" data-tilt data-tilt-scale="1.05">
-                <h3>4+</h3>
-                <p>Years Experience</p>
+
+            <!-- Stat 2: Experience -->
+            <div class="glass-card stat-card" data-aos="zoom-in" data-aos-delay="150" data-tilt data-tilt-scale="1.05" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+                <div class="terminal-header" style="background: rgba(15, 23, 42, 0.95); padding: 8px 15px;">
+                    <div class="terminal-buttons">
+                        <div class="terminal-btn btn-red"></div>
+                        <div class="terminal-btn btn-yellow"></div>
+                        <div class="terminal-btn btn-green"></div>
+                    </div>
+                    <div class="terminal-title" style="font-family: monospace; font-size: 11px;">experience_kernel.sh</div>
+                </div>
+                <div style="padding: 30px; display: flex; flex-direction: column; flex-grow: 1;">
+                    <h3 style="margin-bottom: 5px;">4+</h3>
+                    <p style="margin-bottom: 15px;">Years Experience</p>
+                    
+                    <div style="font-family: monospace; font-size: 11px; color: var(--text-muted); text-align: left; display: flex; flex-direction: column; gap: 4px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                        <div><span style="color: var(--accent-2);">THREAD_COUNT:</span> 4_YEARS</div>
+                        <div><span style="color: var(--accent-2);">LOAD_RATIO:</span> CONSTANT</div>
+                        <div><span style="color: var(--accent-2);">INTEGRITY:</span> CRITICAL</div>
+                    </div>
+                    
+                    <svg viewBox="0 0 100 30" style="width: 100%; height: 35px; margin-top: 20px; stroke: #0ea5e9; stroke-width: 1.5; fill: none; opacity: 0.8; filter: drop-shadow(0 0 4px #0ea5e9);">
+                        <path d="M0,25 Q20,10 40,25 T80,5 L100,15"></path>
+                    </svg>
+                </div>
             </div>
-            <div class="glass-card stat-card" data-aos="zoom-in" data-aos-delay="300" data-tilt data-tilt-scale="1.05">
-                <h3>100+</h3>
-                <p>Components Built</p>
+
+            <!-- Stat 3: Components -->
+            <div class="glass-card stat-card" data-aos="zoom-in" data-aos-delay="300" data-tilt data-tilt-scale="1.05" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+                <div class="terminal-header" style="background: rgba(15, 23, 42, 0.95); padding: 8px 15px;">
+                    <div class="terminal-buttons">
+                        <div class="terminal-btn btn-red"></div>
+                        <div class="terminal-btn btn-yellow"></div>
+                        <div class="terminal-btn btn-green"></div>
+                    </div>
+                    <div class="terminal-title" style="font-family: monospace; font-size: 11px;">components_registry.cfg</div>
+                </div>
+                <div style="padding: 30px; display: flex; flex-direction: column; flex-grow: 1;">
+                    <h3 style="margin-bottom: 5px;">100+</h3>
+                    <p style="margin-bottom: 15px;">Components Built</p>
+                    
+                    <div style="font-family: monospace; font-size: 11px; color: var(--text-muted); text-align: left; display: flex; flex-direction: column; gap: 4px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                        <div><span style="color: var(--accent-3);">REGISTRY:</span> 100_UNITS</div>
+                        <div><span style="color: var(--accent-3);">TYPE:</span> glassmorphic</div>
+                        <div><span style="color: var(--accent-3);">CACHING:</span> LOCAL</div>
+                    </div>
+                    
+                    <svg viewBox="0 0 100 30" style="width: 100%; height: 35px; margin-top: 20px; stroke: #f59e0b; stroke-width: 1.5; fill: none; opacity: 0.8; filter: drop-shadow(0 0 4px #f59e0b);">
+                        <path d="M0,15 L20,5 L40,25 L60,10 L80,20 L100,5"></path>
+                    </svg>
+                </div>
             </div>
         </div>
     </section>
-
     <section id="contact">
-        <div class="glass-card contact-container" data-aos="fade-up">
-            <div class="contact-text">
-                <h2>Let's build something exceptional.</h2>
-                <p>I'm currently looking for new opportunities to collaborate on innovative products. Whether you have a project in mind or just want to connect, my inbox is always open.</p>
-                <div class="social-links">
-                    <a href="#" class="hover-target" target="_blank"><i class="fa fa-github"></i></a>
-                    <a href="#" class="hover-target" target="_blank"><i class="fa fa-linkedin"></i></a>
-                    <a href="#" class="hover-target" target="_blank"><i class="fa fa-twitter"></i></a>
+        <div class="glass-card contact-container" data-aos="fade-up" style="padding: 0; display: block; overflow: hidden;">
+            <div class="terminal-header" style="border-top-left-radius: 24px; border-top-right-radius: 24px; background: rgba(15, 23, 42, 0.95);">
+                <div class="terminal-buttons">
+                    <div class="terminal-btn btn-red"></div>
+                    <div class="terminal-btn btn-yellow"></div>
+                    <div class="terminal-btn btn-green"></div>
                 </div>
+                <div class="terminal-title" style="font-family: monospace; font-size: 12px;">contact_tel.sh</div>
             </div>
-            <form class="contact-form" onsubmit="event.preventDefault();">
-                <div class="input-group">
-                    <input type="text" id="name" required>
-                    <label for="name">Your Name</label>
+            <div class="contact-grid-wrap">
+                <div class="contact-text">
+                    <h2>Let's build something exceptional.</h2>
+                    <p>I'm currently looking for new opportunities to collaborate on innovative products. Whether you have a project in mind or just want to connect, my inbox is always open.</p>
+                    <div class="social-links">
+                        <a href="#" class="hover-target" target="_blank"><i class="fa fa-github"></i></a>
+                        <a href="#" class="hover-target" target="_blank"><i class="fa fa-linkedin"></i></a>
+                        <a href="#" class="hover-target" target="_blank"><i class="fa fa-twitter"></i></a>
+                    </div>
                 </div>
-                <div class="input-group">
-                    <input type="email" id="email" required>
-                    <label for="email">Email Address</label>
-                </div>
-                <div class="input-group">
-                    <textarea id="message" required></textarea>
-                    <label for="message">Message</label>
-                </div>
-                <button type="submit" class="btn btn-primary hover-target" style="width:100%; justify-content:center; margin-top:10px;">
-                    <i class="fa fa-paper-plane"></i> Send Message
-                </button>
-            </form>
+                <form class="contact-form" onsubmit="event.preventDefault();">
+                    <div class="input-group">
+                        <input type="text" id="name" required>
+                        <label for="name">Your Name</label>
+                    </div>
+                    <div class="input-group">
+                        <input type="email" id="email" required>
+                        <label for="email">Email Address</label>
+                    </div>
+                    <div class="input-group">
+                        <textarea id="message" required></textarea>
+                        <label for="message">Message</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary hover-target" style="width:100%; justify-content:center; margin-top:10px;">
+                        <i class="fa fa-paper-plane"></i> Send Message
+                    </button>
+                </form>
+            </div>
         </div>
     </section>
-
     <footer>
         &copy; 2026 Surya Prakash &bull; Engineered with passion & precision.
     </footer>
-
     <!-- AOS Animation Library -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
     <!-- Vanilla Tilt 3D Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
-    
     <script>
         // 1. SCROLL RESTORATION & PROGRESS & NAVBAR EFFECT
         if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
         window.scrollTo(0, 0);
-
         window.addEventListener('scroll', () => {
             // Navbar Glass effect
             const navbar = document.getElementById('navbar');
@@ -671,69 +1560,11 @@
                 navbar.style.padding = '20px 8%';
                 navbar.style.background = 'rgba(3, 7, 18, 0.5)';
             }
-
             // Scroll Progress Bar
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             const scrolled = (winScroll / height) * 100;
             document.getElementById("scroll-progress").style.width = scrolled + "%";
-        });
-
-        // 2. CUSTOM CURSOR
-        const cursorDot = document.getElementById('cursor-dot');
-        const cursorOutline = document.getElementById('cursor-outline');
-        
-        window.addEventListener('mousemove', function(e) {
-            const posX = e.clientX;
-            const posY = e.clientY;
-            
-            cursorDot.style.left = posX + 'px';
-            cursorDot.style.top = posY + 'px';
-            
-            // Add a slight delay to the outline for physical feel
-            cursorOutline.animate({
-                left: posX + 'px',
-                top: posY + 'px'
-            }, { duration: 500, fill: "forwards" });
-        });
-
-        // Add magnetic hover class when hovering over specific elements
-        document.querySelectorAll('a, button, input, textarea, .hover-target').forEach(el => {
-            el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-            el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
-        });
-
-        // 3. DYNAMIC TYPEWRITER EFFECT
-        const phrases = ["Responsive Dashboards.", "Interactive WebGL Experiences.", "Fluid UI Systems.", "Enterprise Applications."];
-        let i = 0; let j = 0; let isDeleting = false; let isEnd = false;
-        const speed = 150; const waitTime = 3000;
-        
-        function loopTypewriter() {
-            isEnd = false;
-            document.getElementById("typewriter").innerHTML = phrases[i].substring(0, j);
-
-            if (!isDeleting && j <= phrases[i].length) {
-                j++;
-                setTimeout(loopTypewriter, speed);
-            }
-            if (isDeleting && j <= phrases[i].length) {
-                j--;
-                setTimeout(loopTypewriter, speed / 2);
-            }
-            if (j == phrases[i].length) {
-                isEnd = true;
-                isDeleting = true;
-                setTimeout(loopTypewriter, waitTime);
-            }
-            if (j === 0 && isDeleting) {
-                isDeleting = false;
-                i++;
-                if (i === phrases.length) i = 0;
-                setTimeout(loopTypewriter, 300);
-            }
-        }
-        document.addEventListener("DOMContentLoaded", function() {
-            setTimeout(loopTypewriter, 1000);
         });
 
         // 4. INITIALIZE AOS
@@ -744,148 +1575,247 @@
             easing: 'ease-out-cubic'
         });
 
-        // 5. SKILLS PROGRESS CIRCULAR ANIMATIONS
+        // 5. INTERACTIVE CLI TERMINAL CONSOLE
+        const terminalScreen = document.getElementById('terminal-screen');
+        const terminalInput = document.getElementById('terminal-input');
+        
+        if (terminalInput) {
+            terminalInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const command = terminalInput.value.trim().toLowerCase();
+                    terminalInput.value = '';
+                    if (command) {
+                        executeCommand(command);
+                    }
+                }
+            });
+        }
+
+        function runCLICommand(command) {
+            if (terminalInput) {
+                terminalInput.value = '';
+            }
+            executeCommand(command);
+        }
+
+        function executeCommand(command) {
+            // Add user input log
+            const userLine = document.createElement('div');
+            userLine.className = 'terminal-log';
+            userLine.innerHTML = `<span class="terminal-prompt">surya@prakash:~$</span> <span style="color:#ffffff;">${escapeHTML(command)}</span>`;
+            
+            // Insert before the input line
+            const inputLine = terminalScreen.querySelector('.terminal-line');
+            terminalScreen.insertBefore(userLine, inputLine);
+
+            const resultLine = document.createElement('div');
+            resultLine.className = 'terminal-log';
+
+            let output = '';
+            switch (command) {
+                case 'help':
+                    output = `Available system commands:
+  <span style="color:var(--accent-1); font-weight:bold;">skills</span>     - Display advanced technical capabilities spec
+  <span style="color:var(--accent-1); font-weight:bold;">projects</span>   - List featured production architectures
+  <span style="color:var(--accent-1); font-weight:bold;">contact</span>    - Output direct telemetry connection details
+  <span style="color:var(--accent-1); font-weight:bold;">clear</span>      - Clear terminal console buffers
+  <span style="color:var(--accent-1); font-weight:bold;">help</span>       - Print system command directory`;
+                    break;
+                case 'skills':
+                    output = `--- SYSTEM CAPABILITY SPECS ---
+  [Core UI Engineering]    : HTML5, Flexbox, Grid, Component modularity (95%)
+  [State & Core Logic]     : JavaScript (ES6+), React context & reducers (90%)
+  [Data & Performance]     : ECharts integrations, speed optimizations (88%)
+  [Administrative Systems] : Form validation, schedule data-binding APIs (94%)`;
+                    break;
+                case 'projects':
+                    output = `--- ACTIVE WORK SHOWCASE ---
+  [1] RMG Recurring Schedule Component
+      - Modular calendar data-binding payload persistence engine.
+  [2] High-End Performance Portfolio
+      - Obsidian static layout system optimized for 0% CPU idle.
+  [3] Aether DeFi Dashboard
+      - Real-time trading widgets with interactive layout frames.`;
+                    break;
+                case 'contact':
+                    output = `--- CONNECTION CHANNELS ---
+  [Email]    : surya.prakash.dev@gmail.com
+  [Github]   : github.com/suryaprakash
+  [LinkedIn] : linkedin.com/in/surya-prakash-dev`;
+                    break;
+                case 'clear':
+                    // Clear all logs except welcome
+                    const logs = terminalScreen.querySelectorAll('.terminal-log');
+                    logs.forEach(log => log.remove());
+                    output = 'Console buffers cleared.';
+                    break;
+                default:
+                    output = `Command not found: <span style="color:#ef4444;">${escapeHTML(command)}</span>. Type <span style="color:var(--accent-1);">help</span> for system commands.`;
+            }
+
+            resultLine.innerHTML = output;
+            terminalScreen.insertBefore(resultLine, inputLine);
+            
+            // Auto scroll
+            setTimeout(() => {
+                terminalScreen.scrollTop = terminalScreen.scrollHeight;
+            }, 10);
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+
+        // 5.1 ROADMAP SYSTEM DIAGNOSTIC EXPLORER
+        const roadmapDiagnosticsData = {
+            1: [
+                { text: "$ ./run-diagnostic-checks", delay: 100, color: "#8892b0" },
+                { text: "[INFO] Spawning client parity threads...", delay: 400, color: "#e2e8f0" },
+                { text: "[OK] Parity match found on RG Goals config (console/common/goalsRecurring.html).", delay: 800, color: "#10b981" },
+                { text: "[INFO] Benchmarking SVG canvas topology node count...", delay: 1200, color: "#e2e8f0" },
+                { text: "[OK] Node processing latency: 0.08ms (Optimal, zero memory leaks).", delay: 1600, color: "#10b981" },
+                { text: "[SUCCESS] All compliance validation models passed.", delay: 2000, color: "#f59e0b" }
+            ],
+            2: [
+                { text: "$ ./run-diagnostic-checks", delay: 100, color: "#8892b0" },
+                { text: "[INFO] Initializing modular video playback frame engine...", delay: 400, color: "#e2e8f0" },
+                { text: "[OK] Native HTML5 media context attached successfully.", delay: 800, color: "#10b981" },
+                { text: "[INFO] Loading jQuery AJAX compliancy risk controllers...", delay: 1200, color: "#e2e8f0" },
+                { text: "[SUCCESS] Interactive video compliance diagnostics verified. Parity active.", delay: 1600, color: "#f59e0b" }
+            ],
+            3: [
+                { text: "$ ./run-diagnostic-checks", delay: 100, color: "#8892b0" },
+                { text: "[INFO] Binding telemetry data streams to ECharts structures...", delay: 400, color: "#e2e8f0" },
+                { text: "[OK] D3.js svg-node DOM data-mapping verified.", delay: 800, color: "#10b981" },
+                { text: "[INFO] Tuning pipeline performance profiles...", delay: 1200, color: "#e2e8f0" },
+                { text: "[SUCCESS] Telemetry dashboard telemetry fully optimized at 60fps.", delay: 1600, color: "#f59e0b" }
+            ]
+        };
+
+        function startRoadmapDiagnostic(index, btn) {
+            const consoleEl = document.getElementById(`diag-console-${index}`);
+            if (!consoleEl || btn.disabled) return;
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Running diagnostic...`;
+
+            // Clear previous console outputs and set active glowing state
+            consoleEl.innerHTML = '';
+            consoleEl.classList.add('running-test');
+
+            const logs = roadmapDiagnosticsData[index];
+            logs.forEach(log => {
+                setTimeout(() => {
+                    const logLine = document.createElement('div');
+                    logLine.className = 'diagnostic-log-item';
+                    logLine.style.color = log.color;
+                    logLine.innerHTML = log.text;
+                    consoleEl.appendChild(logLine);
+                    // scroll to bottom
+                    consoleEl.scrollTop = consoleEl.scrollHeight;
+                }, log.delay);
+            });
+
+            // Re-enable button after diagnostic ends
+            const maxDelay = Math.max(...logs.map(l => l.delay)) + 400;
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa fa-refresh"></i> rerun diagnostic`;
+                consoleEl.classList.remove('running-test');
+            }, maxDelay);
+        }
+
+        // 5.2 PROJECT SYSTEM DIAGNOSTIC EXPLORER
+        const projectDiagnosticsData = {
+            1: [
+                { text: "$ ./test-suite --audio-core", delay: 100, color: "#8892b0" },
+                { text: "[TEST] Initializing web audio buffer contexts...", delay: 350, color: "#e2e8f0" },
+                { text: "[TEST] Buffering media data streams... [OK]", delay: 700, color: "#10b981" },
+                { text: "[TEST] Rendering vector dynamic visualizer nodes...", delay: 1050, color: "#e2e8f0" },
+                { text: "[OK] Canvas render cycle: 0.14ms (Optimal speed).", delay: 1400, color: "#10b981" },
+                { text: "[SUCCESS] Playback pipelines fully verified at 100% throughput.", delay: 1750, color: "#f59e0b" }
+            ],
+            2: [
+                { text: "$ ./test-suite --admin-core", delay: 100, color: "#8892b0" },
+                { text: "[TEST] Scanning administrative AML compliance forms...", delay: 350, color: "#e2e8f0" },
+                { text: "[TEST] Auditing AJAX data payloads... [OK]", delay: 700, color: "#10b981" },
+                { text: "[TEST] Injecting ECharts real-time visualization vectors...", delay: 1050, color: "#e2e8f0" },
+                { text: "[OK] Dynamic form data-binding verification passed.", delay: 1400, color: "#10b981" },
+                { text: "[SUCCESS] Security controls fully audit-synchronized.", delay: 1750, color: "#f59e0b" }
+            ],
+            3: [
+                { text: "$ ./test-suite --defi-ws", delay: 100, color: "#8892b0" },
+                { text: "[TEST] Establishing socket handshakes... ws://aether.defi/stream", delay: 350, color: "#e2e8f0" },
+                { text: "[TEST] Querying mock smart contract registries... [OK]", delay: 700, color: "#10b981" },
+                { text: "[TEST] Drawing responsive grid trading graph curves...", delay: 1050, color: "#e2e8f0" },
+                { text: "[OK] WebSocket feeds rendering cleanly at 60fps.", delay: 1400, color: "#10b981" },
+                { text: "[SUCCESS] Financial portfolio sandbox tests passed.", delay: 1750, color: "#f59e0b" }
+            ]
+        };
+
+        function startProjectDiagnostic(index, btn) {
+            const consoleEl = document.getElementById(`project-console-${index}`);
+            if (!consoleEl || btn.disabled) return;
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Running test suite...`;
+
+            // Clear previous console outputs and set active glowing state
+            consoleEl.innerHTML = '';
+            consoleEl.classList.add('running-test');
+
+            const logs = projectDiagnosticsData[index];
+            logs.forEach(log => {
+                setTimeout(() => {
+                    const logLine = document.createElement('div');
+                    logLine.className = 'diagnostic-log-item';
+                    logLine.style.color = log.color;
+                    logLine.innerHTML = log.text;
+                    consoleEl.appendChild(logLine);
+                    // scroll to bottom
+                    consoleEl.scrollTop = consoleEl.scrollHeight;
+                }, log.delay);
+            });
+
+            // Re-enable button after diagnostic ends
+            const maxDelay = Math.max(...logs.map(l => l.delay)) + 400;
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa fa-refresh"></i> rerun test suite`;
+                consoleEl.classList.remove('running-test');
+            }, maxDelay);
+        }
+
+        // 6. TECHNICAL SPEC MATRIX METER ANIMATION
         document.addEventListener("DOMContentLoaded", function() {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        const item = entry.target;
-                        const progressCircle = item.querySelector('.progress-circle');
-                        const percentText = item.querySelector('.percent-text');
-                        const targetPercent = parseInt(percentText.getAttribute('data-target'));
-                        
-                        setTimeout(() => {
-                            const circumference = 251.2;
-                            const offset = circumference - (targetPercent / 100) * circumference;
-                            progressCircle.style.strokeDashoffset = offset;
-                            
-                            let count = 0;
-                            const duration = 1500; 
-                            const intervalTime = duration / targetPercent; 
-                            
-                            let counter = setInterval(() => {
-                                count++;
-                                percentText.innerText = count + '%';
-                                if (count >= targetPercent) clearInterval(counter);
-                            }, intervalTime);
-                        }, 400);
-
-                        observer.unobserve(item);
+                        const card = entry.target;
+                        const fills = card.querySelectorAll('.matrix-bar-fill');
+                        fills.forEach(fill => {
+                            const percent = fill.getAttribute('data-percent');
+                            setTimeout(() => {
+                                fill.style.width = percent + '%';
+                            }, 150);
+                        });
+                        observer.unobserve(card);
                     }
                 });
-            }, { threshold: 0.6 });
-
-            document.querySelectorAll('.skill-circular-card').forEach(item => observer.observe(item));
+            }, { threshold: 0.25 });
+            
+            document.querySelectorAll('.matrix-card').forEach(card => observer.observe(card));
         });
 
-        // 6. PRO INTERACTIVE NETWORK TOPOLOGY CANVAS
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        
-        let width, height;
-        let particles = [];
-        const connectionDistance = 150;
-        
-        let mouse = { x: null, y: null, radius: 200 }; 
-        
-        window.addEventListener('mousemove', (e) => { 
-            mouse.x = e.x; 
-            mouse.y = e.y; 
-        });
 
-        // When mouse leaves screen
-        window.addEventListener('mouseout', () => {
-            mouse.x = null;
-            mouse.y = null;
-        });
-
-        function resize() { 
-            width = canvas.width = window.innerWidth; 
-            height = canvas.height = window.innerHeight; 
-        }
-        
-        window.addEventListener('resize', resize);
-        resize();
-
-        class Node {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
-                this.radius = Math.random() * 2 + 1;
-                const isCyan = Math.random() > 0.5;
-                this.color = isCyan ? 'rgba(6, 182, 212, 0.6)' : 'rgba(79, 70, 229, 0.6)';
-            }
-
-            update() {
-                this.x += this.vx; this.y += this.vy;
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
-
-                if (mouse.x != null && mouse.y != null) {
-                    let dx = mouse.x - this.x; let dy = mouse.y - this.y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < mouse.radius) {
-                        const forceDirectionX = dx / distance; const forceDirectionY = dy / distance;
-                        const force = (mouse.radius - distance) / mouse.radius;
-                        this.x -= forceDirectionX * force * 2; this.y -= forceDirectionY * force * 2;
-                    }
-                }
-            }
-
-            draw() {
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = this.color; ctx.fill();
-            }
-        }
-
-        function initNetwork() {
-            particles = [];
-            const particleCount = Math.min(Math.floor((width * height) / 15000), 100);
-            for (let i = 0; i < particleCount; i++) particles.push(new Node());
-        }
-
-        function drawLines() {
-            for (let a = 0; a < particles.length; a++) {
-                for (let b = a; b < particles.length; b++) {
-                    let dx = particles[a].x - particles[b].x;
-                    let dy = particles[a].y - particles[b].y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < connectionDistance) {
-                        let opacity = 1 - (distance / connectionDistance);
-                        ctx.beginPath(); ctx.strokeStyle = `rgba(99, 102, 241, ${opacity * 0.2})`;
-                        ctx.lineWidth = 1; ctx.moveTo(particles[a].x, particles[a].y);
-                        ctx.lineTo(particles[b].x, particles[b].y); ctx.stroke();
-                    }
-                }
-                
-                if (mouse.x != null && mouse.y != null) {
-                    let dx = particles[a].x - mouse.x; let dy = particles[a].y - mouse.y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < connectionDistance * 1.5) {
-                        let opacity = 1 - (distance / (connectionDistance * 1.5));
-                        ctx.beginPath(); ctx.strokeStyle = `rgba(6, 182, 212, ${opacity * 0.4})`;
-                        ctx.lineWidth = 1.5; ctx.moveTo(particles[a].x, particles[a].y);
-                        ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
-                    }
-                }
-            }
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-            drawLines();
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update(); particles[i].draw();
-            }
-            requestAnimationFrame(animate);
-        }
-
-        initNetwork(); animate();
     </script>
 </body>
 </html>
