@@ -22,6 +22,7 @@
             --accent-1: #10b981; /* Premium Emerald */
             --accent-2: #0ea5e9; /* Tech Sky Blue */
             --accent-3: #f59e0b; /* Amber Gold */
+            --accent-glow: rgba(16, 185, 129, 0.15);
             --glass-bg: rgba(15, 23, 42, 0.7);
             --glass-border: rgba(255, 255, 255, 0.06);
             --glass-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
@@ -232,26 +233,37 @@
 
         /* GLASSMORPHISM DARK CARD */
         .glass-card {
-            background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.06), transparent 45%), var(--glass-bg);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border); border-radius: 24px; 
             box-shadow: var(--glass-shadow); position: relative;
-            transition: all 0.4s ease; overflow: hidden;
+            transition: all 0.4s ease, background 0.1s ease; overflow: hidden;
             /* For Vanilla Tilt to preserve 3d elements */
             transform-style: preserve-3d;
         }
         
         .glass-card::before {
-            content: ""; position: absolute; inset: 0; border-radius: 24px; padding: 1px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+            content: ""; position: absolute; inset: 0; border-radius: 24px; padding: 1.2px;
+            background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--accent-1) 0%, rgba(255,255,255,0.05) 60%, transparent 100%);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+            transition: opacity 0.4s ease;
+            opacity: 0.35;
+            z-index: 2;
+        }
+
+        .glass-card:hover::before { 
+            opacity: 1;
+            background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--accent-1) 0%, var(--accent-2) 40%, transparent 100%);
         }
 
         /* Hover effect slightly reduced here to let Vanilla Tilt handle the transform */
         .glass-card:hover { 
             border-color: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 40px rgba(79, 70, 229, 0.1); 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 40px var(--accent-glow); 
         }
+
+
 
         /* 1. SPLIT HERO LAYOUT */
         .hero-split-grid {
@@ -979,7 +991,245 @@
             mix-blend-mode:soft-light;
         }
 
+        /* Ambient Parallax Blobs */
+        .ambient-blob {
+            border-radius: 50%;
+            filter: blur(140px);
+            -webkit-filter: blur(140px);
+            pointer-events: none;
+            opacity: 0.45;
+        }
+        .blob-emerald {
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0) 70%);
+            animation: floatBlob1 16s ease-in-out infinite;
+        }
+        .blob-sky {
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.12) 0%, rgba(14, 165, 233, 0) 70%);
+            animation: floatBlob2 20s ease-in-out infinite;
+        }
+        .blob-amber {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0) 70%);
+            animation: floatBlob3 15s ease-in-out infinite;
+        }
 
+        @keyframes floatBlob1 {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(60px, -40px) scale(1.1); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+        @keyframes floatBlob2 {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-70px, 50px) scale(1.08); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+        @keyframes floatBlob3 {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(40px, 60px) scale(1.12); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        /* PREMIUM EMAIL BADGE WIDGET */
+        .email-badge-widget {
+            margin-top: 30px;
+            background: rgba(15, 23, 42, 0.45);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: left;
+        }
+
+        .email-badge-widget::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.08), transparent);
+            transform: skewX(-25deg);
+            transition: 0.75s;
+        }
+
+        .email-badge-widget:hover::before {
+            left: 150%;
+        }
+
+        .email-badge-widget:hover {
+            border-color: rgba(16, 185, 129, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 20px rgba(16, 185, 129, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .email-badge-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: monospace;
+            font-size: 11px;
+            color: var(--accent-1);
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .email-badge-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .email-badge-content span {
+            font-size: 20px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            word-break: break-all;
+        }
+
+        .copy-badge-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            outline: none;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .copy-badge-btn:hover {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--accent-1);
+            color: #ffffff;
+            transform: scale(1.08);
+        }
+        
+        .copy-badge-btn.success {
+            background: rgba(16, 185, 129, 0.2) !important;
+            border-color: var(--accent-1) !important;
+            color: #34d399 !important;
+        }
+
+        .email-badge-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: monospace;
+            font-size: 11px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 12px;
+        }
+
+        .status-pulse-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+        }
+
+        .pulse-dot-green {
+            width: 6px;
+            height: 6px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .email-action-link {
+            color: var(--accent-2);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        .email-action-link:hover {
+            color: #38bdf8;
+            text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+        }
+
+        /* PREMIUM TOAST NOTIFICATION */
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            right: -350px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid var(--accent-1);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #ffffff;
+            font-family: monospace;
+            font-size: 13px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(16, 185, 129, 0.15);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10001;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .toast-notification.show {
+            right: 30px;
+        }
+
+        .toast-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--accent-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .toast-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            text-align: left;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            color: var(--accent-1);
+        }
+
+        .toast-desc {
+            color: var(--text-muted);
+            font-size: 11px;
+        }
     </style>
 </head>
 <body>
@@ -987,8 +1237,19 @@
     <div id="scroll-progress"></div>
     <!-- 2. CUSTOM CURSOR -->
     <div class="bg-wrapper">
-        <div class="grid-overlay"></div>
+        <div class="grid-overlay" id="bg-grid"></div>
         <div class="noise-overlay"></div>
+        <canvas id="particles-canvas" style="position: absolute; inset: 0; pointer-events: none; z-index: -1; opacity: 0.35;"></canvas>
+        <!-- Premium Parallax Ambient Blobs -->
+        <div class="ambient-blob-wrapper" id="blob-wrapper-1" style="position: absolute; top: 10%; left: -10%; pointer-events: none; transition: transform 0.2s cubic-bezier(0.1, 0.8, 0.2, 1); will-change: transform;">
+            <div class="ambient-blob blob-emerald"></div>
+        </div>
+        <div class="ambient-blob-wrapper" id="blob-wrapper-2" style="position: absolute; top: 45%; right: -15%; pointer-events: none; transition: transform 0.2s cubic-bezier(0.1, 0.8, 0.2, 1); will-change: transform;">
+            <div class="ambient-blob blob-sky"></div>
+        </div>
+        <div class="ambient-blob-wrapper" id="blob-wrapper-3" style="position: absolute; top: 75%; left: 5%; pointer-events: none; transition: transform 0.2s cubic-bezier(0.1, 0.8, 0.2, 1); will-change: transform;">
+            <div class="ambient-blob blob-amber"></div>
+        </div>
     </div>
 
     <nav class="navbar" id="navbar">
@@ -1003,9 +1264,19 @@
                 <a href="#stats" class="hover-target" style="font-family: monospace;">[impact.json]</a>
                 <a href="#contact" class="hover-target" style="font-family: monospace;">[contact.sh]</a>
             </div>
-            <div class="nav-telemetry" style="font-family: monospace; font-size: 11px; color: var(--accent-1); display: flex; align-items: center; gap: 8px;">
-                <div class="pulse-dot" style="width: 6px; height: 6px; background-color: var(--accent-1);"></div>
-                <span>PING: 0.12ms</span>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <!-- Theme Cycle -->
+                <button id="theme-cycle-btn" class="hover-target" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 6px 12px; border-radius: 8px; font-family: monospace; font-size: 11px; color: var(--accent-1); display: flex; align-items: center; gap: 6px; outline: none;">
+                    <i class="fa fa-paint-brush"></i> Theme: <span id="current-theme-label">Emerald</span>
+                </button>
+                <!-- Sound Toggle -->
+                <button id="audio-toggle-btn" class="hover-target" style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); width: 32px; height: 32px; border-radius: 8px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; outline: none;" title="Toggle Sound FX">
+                    <i class="fa fa-volume-off" id="audio-btn-icon"></i>
+                </button>
+                <div class="nav-telemetry" style="font-family: monospace; font-size: 11px; color: var(--accent-1); display: flex; align-items: center; gap: 8px;">
+                    <div class="pulse-dot" style="width: 6px; height: 6px; background-color: var(--accent-1);"></div>
+                    <span>PING: 0.12ms</span>
+                </div>
             </div>
         </div>
     </nav>
@@ -1015,7 +1286,6 @@
             <div class="hero-content" data-aos="fade-up" data-aos-duration="1200">
                 <!-- Advanced Glassmorphic ID Badge Panel -->
                 <div class="developer-id-badge" style="display: inline-flex; align-items: center; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); padding: 16px 24px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05); margin-bottom: 30px; position: relative; overflow: visible;">
-                    
                     <!-- Glowing Interactive Glassmorphic Profile Avatar -->
                     <div class="hero-avatar-wrapper" style="position: relative; display: flex; align-items: center; justify-content: center; width: 75px; height: 75px;">
                         <div class="avatar-glow" style="position: absolute; inset: -4px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); opacity: 0.55; filter: blur(6px); animation: avatarPulse 3s infinite alternate;"></div>
@@ -1024,10 +1294,8 @@
                             <img src="suryaprakash.jpg" alt="Surya Prakash" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 2px solid #080c15;" />
                         </div>
                     </div>
-
                     <!-- Telemetry Divider Line -->
                     <div style="width: 1px; background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.15), transparent); height: 50px; margin: 0 22px;"></div>
-
                     <!-- Monospaced Telemetry Credentials -->
                     <div style="display: flex; flex-direction: column; gap: 4px; text-align: left; font-family: monospace;">
                         <div style="font-size: 10px; color: var(--accent-1); letter-spacing: 1.5px; font-weight: 700; text-transform: uppercase;">[CODE_SIGNATURE: SURYA]</div>
@@ -1038,7 +1306,6 @@
                         </div>
                     </div>
                 </div>
-                
                 <!-- Telemetry Status Bar -->
                 <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; font-family: monospace; font-size: 11px; margin-bottom: 20px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;">
                     <span style="color: var(--accent-1); font-weight: 700;">[SYS_STATUS: ACTIVE]</span>
@@ -1047,21 +1314,18 @@
                     <span style="opacity: 0.3;">//</span>
                     <span style="color: var(--accent-3); font-weight: 700;">[STACK: ES6/CANVAS]</span>
                 </div>
-
                 <h1 class="hero-title">
                     Frontend Engineering<br>
                     <span class="gradient-text hero-title-sub">
                         &lt;Precision_Built /&gt;
                     </span>
                 </h1>
-                
                 <p style="margin-top: 15px; margin-bottom: 40px; font-size: 19px; line-height: 1.8; color: var(--text-muted); font-weight: 300;">Architecting modular administrative consoles, high-fidelity data dashboards, and responsive game management interfaces with zero latency.</p>
                 <div class="hero-buttons">
                     <a href="#projects" class="btn btn-primary hover-target">Explore Work <i class="fa fa-arrow-right"></i></a>
                     <a href="#contact" class="btn btn-outline hover-target">Get in Touch</a>
                 </div>
             </div>
-            
             <!-- Terminal Console Widget -->
             <div class="terminal-widget" data-aos="fade-left" data-aos-duration="1200">
                 <div class="terminal-header">
@@ -1098,7 +1362,6 @@
                 <p>Spec-sheet detailing frontend system design, state management, and real-time data orchestration capabilities.</p>
             </div>
         </div>
-        
         <div class="skills-matrix-grid">
             <!-- UI & Layout Engineering -->
             <div class="glass-card matrix-card" data-aos="fade-up" style="padding: 0;">
@@ -1146,7 +1409,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Core Logic & Architecture -->
             <div class="glass-card matrix-card" data-aos="fade-up" data-aos-delay="100" style="padding: 0;">
                 <div class="terminal-header" style="border-top-left-radius: 24px; border-top-right-radius: 24px; background: rgba(15, 23, 42, 0.95);">
@@ -1193,7 +1455,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Visualization & Speed -->
             <div class="glass-card matrix-card" data-aos="fade-up" data-aos-delay="200" style="padding: 0;">
                 <div class="terminal-header" style="border-top-left-radius: 24px; border-top-right-radius: 24px; background: rgba(15, 23, 42, 0.95);">
@@ -1242,7 +1503,6 @@
             </div>
         </div>
     </section>
-    
     <section id="experience">
         <div class="section-header" data-aos="fade-up">
             <span class="section-tag">Professional Roadmap</span>
@@ -1269,7 +1529,6 @@
                         <h3>Senior Frontend Architect</h3>
                         <h4>United Interactive Engg.</h4>
                         <p>Spearheaded modernization of high-throughput client-facing administrative consoles and responsive dashboards. Designed reusable micro-frontend design systems with glassmorphic cards and dynamic topology canvas networks.</p>
-                        
                         <div class="diagnostic-console" id="diag-console-1">
                             <div class="diagnostic-log-item" style="color: var(--text-muted);">$ cat united_interactive_parities.cfg</div>
                             <div class="diagnostic-log-item" style="color: var(--accent-1);">> Diagnostic mode idle. Press the trigger below.</div>
@@ -1278,7 +1537,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- 2. UI Technical Lead -->
             <div class="timeline-item right" data-aos="fade-left">
                 <div class="glass-card timeline-card" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2" style="padding: 0; overflow: hidden;">
@@ -1305,7 +1563,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- 3. Frontend Engineer -->
             <div class="timeline-item left" data-aos="fade-right">
                 <div class="glass-card timeline-card" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2" style="padding: 0; overflow: hidden;">
@@ -1334,7 +1591,6 @@
             </div>
         </div>
     </section>
-
     <section id="projects">
         <div class="section-header" data-aos="fade-up">
             <span class="section-tag">Portfolio</span>
@@ -1353,7 +1609,10 @@
                     </div>
                     <div class="terminal-title" style="font-family: monospace; font-size: 12px;">cloud_muez.app</div>
                 </div>
-                <div class="project-image-placeholder" style="border-top-left-radius: 0; border-top-right-radius: 0;"><i class="fa fa-play"></i></div>
+                <div class="project-image-placeholder" style="border-top-left-radius: 0; border-top-right-radius: 0; position: relative;">
+                    <canvas id="project-canvas-1" style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1;"></canvas>
+                    <i class="fa fa-play" style="position: relative; z-index: 2;"></i>
+                </div>
                 <div class="project-content" style="display: flex; flex-direction: column; flex-grow: 1;">
                     <h3>Cloud Muez Platform</h3>
                     <p>Engineered a comprehensive custom media player with an immersive visual interface, smooth playback interactions, and optimized DOM rendering for high performance.</p>
@@ -1377,14 +1636,16 @@
                     </div>
                     <div class="terminal-title" style="font-family: monospace; font-size: 12px;">admin_console.sh</div>
                 </div>
-                <div class="project-image-placeholder mesh-2" style="border-top-left-radius: 0; border-top-right-radius: 0;"><i class="fa fa-shield"></i></div>
+                <div class="project-image-placeholder mesh-2" style="border-top-left-radius: 0; border-top-right-radius: 0; position: relative;">
+                    <canvas id="project-canvas-2" style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1;"></canvas>
+                    <i class="fa fa-shield" style="position: relative; z-index: 2;"></i>
+                </div>
                 <div class="project-content" style="display: flex; flex-direction: column; flex-grow: 1;">
                     <h3>Enterprise Admin Console</h3>
                     <p>Developed an extensive compliance and administration interface featuring complex search panels, real-time data visualization, and scalable dynamic structural templates.</p>
                     <div class="tech-tags" style="margin-bottom: 15px;">
                         <span>jQuery / AJAX</span><span>ECharts Integrations</span><span>Bootstrap Grid</span>
                     </div>
-                    
                     <div class="diagnostic-console" id="project-console-2" style="min-height: 80px; max-height: 120px; font-size: 11px; margin-top: auto;">
                         <div class="diagnostic-log-item" style="color: var(--text-muted);">$ ./test-suite --admin-core</div>
                         <div class="diagnostic-log-item" style="color: var(--accent-2);">> Interface diagnostic idle. Press trigger below.</div>
@@ -1401,14 +1662,16 @@
                     </div>
                     <div class="terminal-title" style="font-family: monospace; font-size: 12px;">defi_dashboard.jsx</div>
                 </div>
-                <div class="project-image-placeholder mesh-3" style="border-top-left-radius: 0; border-top-right-radius: 0;"><i class="fa fa-cubes"></i></div>
+                <div class="project-image-placeholder mesh-3" style="border-top-left-radius: 0; border-top-right-radius: 0; position: relative;">
+                    <canvas id="project-canvas-3" style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1;"></canvas>
+                    <i class="fa fa-cubes" style="position: relative; z-index: 2;"></i>
+                </div>
                 <div class="project-content" style="display: flex; flex-direction: column; flex-grow: 1;">
                     <h3>Aether DeFi Dashboard</h3>
                     <p>Designed a decentralized finance dashboard with highly animated, real-time trading charts, customizable grid layouts, and unified wallet integration protocols.</p>
                     <div class="tech-tags" style="margin-bottom: 15px;">
                         <span>React Ecosystem</span><span>Chart.js / SVG</span><span>WebSocket API</span>
                     </div>
-                    
                     <div class="diagnostic-console" id="project-console-3" style="min-height: 80px; max-height: 120px; font-size: 11px; margin-top: auto;">
                         <div class="diagnostic-log-item" style="color: var(--text-muted);">$ ./test-suite --defi-ws</div>
                         <div class="diagnostic-log-item" style="color: var(--accent-1);">> WebSocket diagnostic idle. Press trigger below.</div>
@@ -1433,19 +1696,16 @@
                 <div style="padding: 30px; display: flex; flex-direction: column; flex-grow: 1;">
                     <h3 style="margin-bottom: 5px;">25+</h3>
                     <p style="margin-bottom: 15px;">Projects Deployed</p>
-                    
                     <div style="font-family: monospace; font-size: 11px; color: var(--text-muted); text-align: left; display: flex; flex-direction: column; gap: 4px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
                         <div><span style="color: var(--accent-1);">STATUS:</span> PRODUCTION</div>
                         <div><span style="color: var(--accent-1);">CHECKSUM:</span> PASSED</div>
                         <div><span style="color: var(--accent-1);">UPTIME:</span> 99.98%</div>
                     </div>
-                    
                     <svg viewBox="0 0 100 30" style="width: 100%; height: 35px; margin-top: 20px; stroke: #10b981; stroke-width: 1.5; fill: none; opacity: 0.8; filter: drop-shadow(0 0 4px #10b981);">
                         <path d="M0,25 Q15,5 30,20 T60,5 T90,20 L100,10"></path>
                     </svg>
                 </div>
             </div>
-
             <!-- Stat 2: Experience -->
             <div class="glass-card stat-card" data-aos="zoom-in" data-aos-delay="150" data-tilt data-tilt-scale="1.05" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
                 <div class="terminal-header" style="background: rgba(15, 23, 42, 0.95); padding: 8px 15px;">
@@ -1459,19 +1719,16 @@
                 <div style="padding: 30px; display: flex; flex-direction: column; flex-grow: 1;">
                     <h3 style="margin-bottom: 5px;">4+</h3>
                     <p style="margin-bottom: 15px;">Years Experience</p>
-                    
                     <div style="font-family: monospace; font-size: 11px; color: var(--text-muted); text-align: left; display: flex; flex-direction: column; gap: 4px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
                         <div><span style="color: var(--accent-2);">THREAD_COUNT:</span> 4_YEARS</div>
                         <div><span style="color: var(--accent-2);">LOAD_RATIO:</span> CONSTANT</div>
                         <div><span style="color: var(--accent-2);">INTEGRITY:</span> CRITICAL</div>
                     </div>
-                    
                     <svg viewBox="0 0 100 30" style="width: 100%; height: 35px; margin-top: 20px; stroke: #0ea5e9; stroke-width: 1.5; fill: none; opacity: 0.8; filter: drop-shadow(0 0 4px #0ea5e9);">
                         <path d="M0,25 Q20,10 40,25 T80,5 L100,15"></path>
                     </svg>
                 </div>
             </div>
-
             <!-- Stat 3: Components -->
             <div class="glass-card stat-card" data-aos="zoom-in" data-aos-delay="300" data-tilt data-tilt-scale="1.05" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
                 <div class="terminal-header" style="background: rgba(15, 23, 42, 0.95); padding: 8px 15px;">
@@ -1485,13 +1742,11 @@
                 <div style="padding: 30px; display: flex; flex-direction: column; flex-grow: 1;">
                     <h3 style="margin-bottom: 5px;">100+</h3>
                     <p style="margin-bottom: 15px;">Components Built</p>
-                    
                     <div style="font-family: monospace; font-size: 11px; color: var(--text-muted); text-align: left; display: flex; flex-direction: column; gap: 4px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
                         <div><span style="color: var(--accent-3);">REGISTRY:</span> 100_UNITS</div>
                         <div><span style="color: var(--accent-3);">TYPE:</span> glassmorphic</div>
                         <div><span style="color: var(--accent-3);">CACHING:</span> LOCAL</div>
                     </div>
-                    
                     <svg viewBox="0 0 100 30" style="width: 100%; height: 35px; margin-top: 20px; stroke: #f59e0b; stroke-width: 1.5; fill: none; opacity: 0.8; filter: drop-shadow(0 0 4px #f59e0b);">
                         <path d="M0,15 L20,5 L40,25 L60,10 L80,20 L100,5"></path>
                     </svg>
@@ -1514,12 +1769,35 @@
                     <h2>Let's build something exceptional.</h2>
                     <p>I'm currently looking for new opportunities to collaborate on innovative products. Whether you have a project in mind or just want to connect, my inbox is always open.</p>
                     <div class="social-links">
-                        <a href="#" class="hover-target" target="_blank"><i class="fa fa-github"></i></a>
-                        <a href="#" class="hover-target" target="_blank"><i class="fa fa-linkedin"></i></a>
-                        <a href="#" class="hover-target" target="_blank"><i class="fa fa-twitter"></i></a>
+                        <a href="#" class="hover-target" target="_blank" id="github-link"><i class="fa fa-github"></i></a>
+                        <a href="#" class="hover-target" target="_blank" id="linkedin-link"><i class="fa fa-linkedin"></i></a>
+                        <a href="#" class="hover-target" target="_blank" id="twitter-link"><i class="fa fa-twitter"></i></a>
+                    </div>
+
+                    <!-- Premium Interactive Email Widget -->
+                    <div class="email-badge-widget hover-target" onclick="copyEmailToClipboard()">
+                        <div class="email-badge-header">
+                            <i class="fa fa-envelope-o"></i>
+                            <span>SECURE_COMMS_LINK</span>
+                        </div>
+                        <div class="email-badge-content">
+                            <span id="display-email-address">loading...</span>
+                            <button class="copy-badge-btn" title="Copy Email">
+                                <i class="fa fa-clone" id="copy-icon"></i>
+                            </button>
+                        </div>
+                        <div class="email-badge-footer">
+                            <div class="status-pulse-wrapper">
+                                <div class="pulse-dot-green"></div>
+                                <span>ONLINE & ACCEPTING</span>
+                            </div>
+                            <a href="#" id="mailto-link" class="email-action-link" onclick="event.stopPropagation();">
+                                <i class="fa fa-external-link"></i> Launch Mail
+                            </a>
+                        </div>
                     </div>
                 </div>
-                <form class="contact-form" onsubmit="event.preventDefault();">
+                <form class="contact-form" onsubmit="handleContactSubmit(event)">
                     <div class="input-group">
                         <input type="text" id="name" required>
                         <label for="name">Your Name</label>
@@ -1539,14 +1817,51 @@
             </div>
         </div>
     </section>
-    <footer>
-        &copy; 2026 Surya Prakash &bull; Engineered with passion & precision.
-    </footer>
+
+    <!-- Dynamic Toast Notification -->
+    <div id="toast-container" class="toast-notification">
+        <div class="toast-icon">
+            <i class="fa fa-terminal"></i>
+        </div>
+        <div class="toast-details">
+            <span class="toast-title" id="toast-title">SYSTEM_ALERT</span>
+            <span class="toast-desc" id="toast-desc">Details of the event.</span>
+        </div>
+    </div>
+
+    <footer>&copy; 2026 Surya Prakash &bull; Engineered with passion & precision.</footer>
     <!-- AOS Animation Library -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <!-- Vanilla Tilt 3D Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
     <script>
+        // 0. DEVELOPER CONFIGURATION
+        const DEVELOPER_PROFILE = {
+            name: "Surya Prakash",
+            email: "suryaprakash.dev@gmail.com", // Dynamic email address variable
+            github: "https://github.com/suryaprakash",
+            linkedin: "https://linkedin.com/in/surya-prakash-dev",
+            twitter: "https://twitter.com/suryaprakash"
+        };
+
+        // Initialize Dynamic Profile Links & Info
+        document.addEventListener('DOMContentLoaded', () => {
+            const displayEmail = document.getElementById('display-email-address');
+            if (displayEmail) displayEmail.textContent = DEVELOPER_PROFILE.email;
+            
+            const mailtoLink = document.getElementById('mailto-link');
+            if (mailtoLink) mailtoLink.href = `mailto:${DEVELOPER_PROFILE.email}`;
+
+            const githubLink = document.getElementById('github-link');
+            if (githubLink) githubLink.href = DEVELOPER_PROFILE.github;
+
+            const linkedinLink = document.getElementById('linkedin-link');
+            if (linkedinLink) linkedinLink.href = DEVELOPER_PROFILE.linkedin;
+
+            const twitterLink = document.getElementById('twitter-link');
+            if (twitterLink) twitterLink.href = DEVELOPER_PROFILE.twitter;
+        });
+
         // 1. SCROLL RESTORATION & PROGRESS & NAVBAR EFFECT
         if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
         window.scrollTo(0, 0);
@@ -1599,6 +1914,16 @@
         }
 
         function executeCommand(command) {
+            // Revert matrix screen if active
+            const activeMatrix = document.getElementById('matrix-canvas');
+            if (activeMatrix) {
+                activeMatrix.remove();
+                if (window.matrixInterval) {
+                    clearInterval(window.matrixInterval);
+                    window.matrixInterval = null;
+                }
+            }
+
             // Add user input log
             const userLine = document.createElement('div');
             userLine.className = 'terminal-log';
@@ -1615,33 +1940,79 @@
             switch (command) {
                 case 'help':
                     output = `Available system commands:
-  <span style="color:var(--accent-1); font-weight:bold;">skills</span>     - Display advanced technical capabilities spec
-  <span style="color:var(--accent-1); font-weight:bold;">projects</span>   - List featured production architectures
-  <span style="color:var(--accent-1); font-weight:bold;">contact</span>    - Output direct telemetry connection details
-  <span style="color:var(--accent-1); font-weight:bold;">clear</span>      - Clear terminal console buffers
-  <span style="color:var(--accent-1); font-weight:bold;">help</span>       - Print system command directory`;
+                        <span style="color:var(--accent-1); font-weight:bold;">skills</span>     - Display advanced technical capabilities spec
+                        <span style="color:var(--accent-1); font-weight:bold;">projects</span>   - List featured production architectures
+                        <span style="color:var(--accent-1); font-weight:bold;">matrix</span>     - Run falling digital rain screensaver
+                        <span style="color:var(--accent-1); font-weight:bold;">contact</span>    - Output direct telemetry connection details
+                        <span style="color:var(--accent-1); font-weight:bold;">clear</span>      - Clear terminal console buffers
+                        <span style="color:var(--accent-1); font-weight:bold;">help</span>       - Print system command directory`;
                     break;
                 case 'skills':
                     output = `--- SYSTEM CAPABILITY SPECS ---
-  [Core UI Engineering]    : HTML5, Flexbox, Grid, Component modularity (95%)
-  [State & Core Logic]     : JavaScript (ES6+), React context & reducers (90%)
-  [Data & Performance]     : ECharts integrations, speed optimizations (88%)
-  [Administrative Systems] : Form validation, schedule data-binding APIs (94%)`;
+                        [Core UI Engineering]    : HTML5, Flexbox, Grid, Component modularity (95%)
+                        [State & Core Logic]     : JavaScript (ES6+), React context & reducers (90%)
+                        [Data & Performance]     : ECharts integrations, speed optimizations (88%)
+                        [Administrative Systems] : Form validation, schedule data-binding APIs (94%)`;
                     break;
                 case 'projects':
                     output = `--- ACTIVE WORK SHOWCASE ---
-  [1] RMG Recurring Schedule Component
-      - Modular calendar data-binding payload persistence engine.
-  [2] High-End Performance Portfolio
-      - Obsidian static layout system optimized for 0% CPU idle.
-  [3] Aether DeFi Dashboard
-      - Real-time trading widgets with interactive layout frames.`;
+                        [1] RMG Recurring Schedule Component
+                            - Modular calendar data-binding payload persistence engine.
+                        [2] High-End Performance Portfolio
+                            - Obsidian static layout system optimized for 0% CPU idle.
+                        [3] Aether DeFi Dashboard
+                            - Real-time trading widgets with interactive layout frames.`;
                     break;
                 case 'contact':
                     output = `--- CONNECTION CHANNELS ---
-  [Email]    : surya.prakash.dev@gmail.com
-  [Github]   : github.com/suryaprakash
-  [LinkedIn] : linkedin.com/in/surya-prakash-dev`;
+                        [Email]    : ${DEVELOPER_PROFILE.email}
+                        [Github]   : ${DEVELOPER_PROFILE.github.replace('https://', '')}
+                        [LinkedIn] : ${DEVELOPER_PROFILE.linkedin.replace('https://', '')}`;
+                    break;
+                case 'matrix':
+                    // Spawn digital matrix rain
+                    const canvas = document.createElement('canvas');
+                    canvas.id = 'matrix-canvas';
+                    canvas.style.position = 'absolute';
+                    canvas.style.top = '0';
+                    canvas.style.left = '0';
+                    canvas.style.width = '100%';
+                    canvas.style.height = '100%';
+                    canvas.style.zIndex = '5';
+                    canvas.style.background = '#090d16';
+                    canvas.style.borderBottomLeftRadius = '16px';
+                    canvas.style.borderBottomRightRadius = '16px';
+                    
+                    terminalScreen.style.position = 'relative';
+                    terminalScreen.appendChild(canvas);
+                    
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                    
+                    const columns = Math.floor(canvas.width / 14);
+                    const drops = Array(columns).fill(1);
+                    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@&%*';
+                    
+                    window.matrixInterval = setInterval(() => {
+                        ctx.fillStyle = 'rgba(9, 13, 22, 0.08)';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        
+                        ctx.fillStyle = '#10b981'; // Emerald rain
+                        ctx.font = '11px monospace';
+                        
+                        for (let i = 0; i < drops.length; i++) {
+                            const char = chars[Math.floor(Math.random() * chars.length)];
+                            ctx.fillText(char, i * 14, drops[i] * 14);
+                            
+                            if (drops[i] * 14 > canvas.height && Math.random() > 0.985) {
+                                drops[i] = 0;
+                            }
+                            drops[i]++;
+                        }
+                    }, 35);
+                    
+                    output = '<span style="color:var(--accent-1); font-weight:bold;">[MATRIX SYSTEM RUNNING]</span> Click "clear console" or run "clear" to terminate digital stream.';
                     break;
                 case 'clear':
                     // Clear all logs except welcome
@@ -1772,6 +2143,9 @@
             consoleEl.innerHTML = '';
             consoleEl.classList.add('running-test');
 
+            // Play diagnostic start tone
+            Synth.play(440, 'triangle', 0.2, 0.4);
+
             const logs = projectDiagnosticsData[index];
             logs.forEach(log => {
                 setTimeout(() => {
@@ -1782,6 +2156,10 @@
                     consoleEl.appendChild(logLine);
                     // scroll to bottom
                     consoleEl.scrollTop = consoleEl.scrollHeight;
+
+                    // Play diagnostic step beep tone
+                    const freq = log.text.includes('SUCCESS') || log.text.includes('[OK]') ? 880 : 550;
+                    Synth.play(freq, 'sine', 0.1, 0.5);
                 }, log.delay);
             });
 
@@ -1791,6 +2169,8 @@
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fa fa-refresh"></i> rerun test suite`;
                 consoleEl.classList.remove('running-test');
+                // Play finish chime
+                Synth.playSuccess();
             }, maxDelay);
         }
 
@@ -1815,7 +2195,630 @@
             document.querySelectorAll('.matrix-card').forEach(card => observer.observe(card));
         });
 
+        // 7. AMBIENT BACKGROUND SCROLL PARALLAX SYSTEM
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Translate the grid background
+            const bgGrid = document.getElementById('bg-grid');
+            if (bgGrid) {
+                bgGrid.style.transform = `translate3d(0, ${scrollTop * 0.18}px, 0)`;
+            }
+            
+            // Translate the ambient glow wrappers with customized damping ratios
+            const wrapper1 = document.getElementById('blob-wrapper-1');
+            const wrapper2 = document.getElementById('blob-wrapper-2');
+            const wrapper3 = document.getElementById('blob-wrapper-3');
+            
+            if (wrapper1) {
+                wrapper1.style.transform = `translate3d(0, ${scrollTop * 0.22}px, 0)`;
+            }
+            if (wrapper2) {
+                wrapper2.style.transform = `translate3d(0, -${scrollTop * 0.15}px, 0)`;
+            }
+            if (wrapper3) {
+                wrapper3.style.transform = `translate3d(0, ${scrollTop * 0.10}px, 0)`;
+            }
+        }, { passive: true });
 
+        // 8. INTERACTIVE GLASS CARD MOUSE SPOTLIGHT
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.glass-card').forEach(card => {
+                card.addEventListener('mousemove', function(e) {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                });
+            });
+        });
+
+        // 9. PREMIUM CONTACT UTILITIES
+        function showNotification(title, message, isError = false) {
+            const toast = document.getElementById('toast-container');
+            const toastTitle = document.getElementById('toast-title');
+            const toastDesc = document.getElementById('toast-desc');
+            const toastIcon = toast.querySelector('.toast-icon i');
+            
+            if (!toast || !toastTitle || !toastDesc) return;
+            
+            toastTitle.textContent = title;
+            toastDesc.textContent = message;
+            
+            if (isError) {
+                toast.style.borderColor = '#ef4444';
+                toast.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(239, 68, 68, 0.15)';
+                toastTitle.style.color = '#ef4444';
+                toastIcon.className = 'fa fa-exclamation-triangle';
+                toastIcon.parentElement.style.color = '#ef4444';
+                toastIcon.parentElement.style.background = 'rgba(239, 68, 68, 0.1)';
+                toastIcon.parentElement.style.borderColor = 'rgba(239, 68, 68, 0.2)';
+            } else {
+                toast.style.borderColor = 'var(--accent-1)';
+                toast.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(16, 185, 129, 0.15)';
+                toastTitle.style.color = 'var(--accent-1)';
+                toastIcon.className = 'fa fa-check';
+                toastIcon.parentElement.style.color = 'var(--accent-1)';
+                toastIcon.parentElement.style.background = 'rgba(16, 185, 129, 0.1)';
+                toastIcon.parentElement.style.borderColor = 'rgba(16, 185, 129, 0.2)';
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function copyEmailToClipboard() {
+            const email = DEVELOPER_PROFILE.email;
+            navigator.clipboard.writeText(email).then(() => {
+                const copyBtn = document.querySelector('.copy-badge-btn');
+                const copyIcon = document.getElementById('copy-icon');
+                
+                if (copyBtn && copyIcon) {
+                    copyBtn.classList.add('success');
+                    copyIcon.className = 'fa fa-check';
+                    copyBtn.setAttribute('title', 'Copied!');
+                    
+                    showNotification("CLIPBOARD_SYNC", "Email copied to clipboard successfully.");
+                    
+                    setTimeout(() => {
+                        copyBtn.classList.remove('success');
+                        copyIcon.className = 'fa fa-clone';
+                        copyBtn.setAttribute('title', 'Copy Email');
+                    }, 2000);
+                }
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showNotification("CLIPBOARD_ERR", "Permission denied or browser error.", true);
+            });
+        }
+
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            const nameEl = document.getElementById('name');
+            const emailEl = document.getElementById('email');
+            const messageEl = document.getElementById('message');
+            
+            if (!nameEl.value || !emailEl.value || !messageEl.value) {
+                showNotification("TRANSMISSION_ERROR", "All fields are required.", true);
+                return;
+            }
+            
+            // Simulating API payload transfer
+            showNotification("TRANSMITTING...", "Sending payload to server...");
+            
+            setTimeout(() => {
+                showNotification("SECURE_TRANSFER_OK", "Message successfully encrypted and sent.");
+                nameEl.value = '';
+                emailEl.value = '';
+                messageEl.value = '';
+            }, 1200);
+        }
+
+        // ==========================================
+        // ADVANCED PRO LEVEL portfolio LOGIC SYSTEMS
+        // ==========================================
+
+        // --- 1. Synthesizer System (Web Audio API) ---
+        const Synth = {
+            ctx: null,
+            volume: 0.15,
+            muted: true, // starts muted by default for clean user experience
+            
+            init() {
+                if (this.ctx) return;
+                try {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                } catch(e) {
+                    console.warn("AudioContext not supported.");
+                }
+            },
+            
+            play(freq, type, duration, volMod = 1) {
+                this.init();
+                if (!this.ctx || this.muted) return;
+                
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+                
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                
+                osc.type = type || 'sine';
+                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                
+                gain.gain.setValueAtTime(this.volume * volMod, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+                
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                
+                osc.start();
+                osc.stop(this.ctx.currentTime + duration);
+            },
+            
+            playTick() {
+                this.play(600, 'triangle', 0.05, 0.3);
+            },
+            
+            playKeyPress() {
+                const freq = 300 + Math.random() * 200;
+                this.play(freq, 'sine', 0.08, 0.4);
+            },
+            
+            playSuccess() {
+                this.play(523.25, 'sine', 0.15); // C5
+                setTimeout(() => this.play(659.25, 'sine', 0.15), 100); // E5
+                setTimeout(() => this.play(783.99, 'sine', 0.25), 200); // G5
+            },
+            
+            playError() {
+                this.play(120, 'sawtooth', 0.3, 0.7);
+            }
+        };
+
+        // --- 2. Interactive Sound Listeners ---
+        const InteractiveSounds = {
+            init() {
+                const interactiveSelector = 'a, button, select, input, textarea, .hover-target, .copy-badge-btn, .cli-btn, .diagnostic-btn';
+                document.addEventListener('mouseover', (e) => {
+                    if (e.target.closest(interactiveSelector)) {
+                        Synth.playTick();
+                    }
+                });
+                
+                document.addEventListener('click', () => {
+                    Synth.init();
+                    if (Synth.ctx && Synth.ctx.state === 'suspended') {
+                        Synth.ctx.resume();
+                    }
+                    Synth.play(440, 'triangle', 0.15, 0.5);
+                });
+            }
+        };
+
+        // --- 3. Dynamic Theme System ---
+        const ThemeSystem = {
+            themes: [
+                {
+                    name: 'Emerald',
+                    colors: {
+                        '--accent-1': '#10b981',
+                        '--accent-2': '#06b6d4',
+                        '--accent-glow': 'rgba(16, 185, 129, 0.15)',
+                        '--text-primary': '#f8fafc',
+                        '--bg-color': '#090d16'
+                    }
+                },
+                {
+                    name: 'Cyberpunk',
+                    colors: {
+                        '--accent-1': '#ff007f',
+                        '--accent-2': '#00f0ff',
+                        '--accent-glow': 'rgba(255, 0, 127, 0.2)',
+                        '--text-primary': '#ffffff',
+                        '--bg-color': '#0c001a'
+                    }
+                },
+                {
+                    name: 'Aether Blue',
+                    colors: {
+                        '--accent-1': '#3b82f6',
+                        '--accent-2': '#8b5cf6',
+                        '--accent-glow': 'rgba(59, 130, 246, 0.18)',
+                        '--text-primary': '#f1f5f9',
+                        '--bg-color': '#050c1e'
+                    }
+                },
+                {
+                    name: 'Solar Amber',
+                    colors: {
+                        '--accent-1': '#f59e0b',
+                        '--accent-2': '#ef4444',
+                        '--accent-glow': 'rgba(245, 158, 11, 0.15)',
+                        '--text-primary': '#fffbeb',
+                        '--bg-color': '#120b02'
+                    }
+                }
+            ],
+            currentIndex: 0,
+            
+            init() {
+                const btn = document.getElementById('theme-cycle-btn');
+                const label = document.getElementById('current-theme-label');
+                if (!btn) return;
+                
+                btn.addEventListener('click', () => {
+                    this.currentIndex = (this.currentIndex + 1) % this.themes.length;
+                    const theme = this.themes[this.currentIndex];
+                    label.textContent = theme.name;
+                    
+                    for (const [prop, val] of Object.entries(theme.colors)) {
+                        document.documentElement.style.setProperty(prop, val);
+                    }
+                    
+                    Synth.playSuccess();
+                    showNotification("THEME_ENGINE", `Active preset: ${theme.name.toUpperCase()}`);
+                });
+            }
+        };
+
+        // --- 4. Interactive Particles Background ---
+        const ParticlesBg = {
+            canvas: null,
+            ctx: null,
+            points: [],
+            numPoints: 60,
+            mouseX: 0,
+            mouseY: 0,
+            
+            init() {
+                this.canvas = document.getElementById('particles-canvas');
+                if (!this.canvas) return;
+                this.ctx = this.canvas.getContext('2d');
+                
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                
+                for (let i = 0; i < this.numPoints; i++) {
+                    this.points.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        vx: (Math.random() - 0.5) * 0.4,
+                        vy: (Math.random() - 0.5) * 0.4,
+                        r: Math.random() * 2 + 1
+                    });
+                }
+                
+                window.addEventListener('mousemove', (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    this.mouseX = e.clientX - rect.left;
+                    this.mouseY = e.clientY - rect.top;
+                });
+                
+                this.animate();
+            },
+            
+            resize() {
+                const wrapper = this.canvas.parentElement;
+                this.canvas.width = wrapper.clientWidth;
+                this.canvas.height = wrapper.clientHeight;
+            },
+            
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-1').trim();
+                
+                for (let i = 0; i < this.points.length; i++) {
+                    const p = this.points[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    
+                    if (p.x < 0 || p.x > this.canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > this.canvas.height) p.vy *= -1;
+                    
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    this.ctx.fillStyle = accentColor;
+                    this.ctx.fill();
+                    
+                    const dx = p.x - this.mouseX;
+                    const dy = p.y - this.mouseY;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 180) {
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(p.x, p.y);
+                        this.ctx.lineTo(this.mouseX, this.mouseY);
+                        const alpha = (1 - dist / 180) * 0.15;
+                        this.ctx.strokeStyle = accentColor;
+                        this.ctx.globalAlpha = alpha;
+                        this.ctx.lineWidth = 0.8;
+                        this.ctx.stroke();
+                        this.ctx.globalAlpha = 1.0;
+                    }
+                    
+                    for (let j = i + 1; j < this.points.length; j++) {
+                        const p2 = this.points[j];
+                        const dx2 = p.x - p2.x;
+                        const dy2 = p.y - p2.y;
+                        const dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+                        if (dist2 < 120) {
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(p.x, p.y);
+                            this.ctx.lineTo(p2.x, p2.y);
+                            const alpha2 = (1 - dist2 / 120) * 0.05;
+                            this.ctx.strokeStyle = accentColor;
+                            this.ctx.globalAlpha = alpha2;
+                            this.ctx.lineWidth = 0.5;
+                            this.ctx.stroke();
+                            this.ctx.globalAlpha = 1.0;
+                        }
+                    }
+                }
+                
+                requestAnimationFrame(() => this.animate());
+            }
+        };
+
+        // --- 5. Hover Previews Visualizations (Canvases) ---
+        const HoverPreviews = {
+            init() {
+                this.setupAudioSpectrum();
+                this.setupMatrixCascade();
+                this.setupDeFiChart();
+            },
+            
+            setupAudioSpectrum() {
+                const canvas = document.getElementById('project-canvas-1');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let active = false;
+                let frame = 0;
+                
+                const draw = () => {
+                    if (!active) {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        return;
+                    }
+                    frame++;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    const barCount = 18;
+                    const accent1 = getComputedStyle(document.documentElement).getPropertyValue('--accent-1').trim();
+                    const accent2 = getComputedStyle(document.documentElement).getPropertyValue('--accent-2').trim();
+                    
+                    const gradient = ctx.createLinearGradient(0, canvas.height, 0, 0);
+                    gradient.addColorStop(0, accent1);
+                    gradient.addColorStop(1, accent2);
+                    
+                    const width = canvas.width / barCount;
+                    for (let i = 0; i < barCount; i++) {
+                        const freqMod = Math.sin(frame * 0.15 + i * 0.5) * Math.cos(frame * 0.05 + i * 0.2);
+                        const amp = Math.abs(freqMod) * (canvas.height * 0.7) + 5;
+                        
+                        ctx.fillStyle = gradient;
+                        ctx.fillRect(i * width + 2, canvas.height - amp, width - 4, amp);
+                    }
+                    requestAnimationFrame(draw);
+                };
+                
+                const card = canvas.closest('.project-card');
+                card.addEventListener('mouseenter', () => {
+                    active = true;
+                    canvas.width = canvas.parentElement.clientWidth;
+                    canvas.height = canvas.parentElement.clientHeight;
+                    draw();
+                });
+                card.addEventListener('mouseleave', () => {
+                    active = false;
+                });
+            },
+            
+            setupMatrixCascade() {
+                const canvas = document.getElementById('project-canvas-2');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let active = false;
+                
+                let columns = [];
+                const initCols = () => {
+                    columns = [];
+                    const fontSize = 10;
+                    const count = Math.floor(canvas.width / fontSize);
+                    for (let i = 0; i < count; i++) {
+                        columns.push({
+                            x: i * fontSize,
+                            y: Math.random() * -100,
+                            speed: 1 + Math.random() * 2
+                        });
+                    }
+                };
+                
+                const draw = () => {
+                    if (!active) {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        return;
+                    }
+                    ctx.fillStyle = 'rgba(15, 23, 42, 0.1)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    const accent1 = getComputedStyle(document.documentElement).getPropertyValue('--accent-1').trim();
+                    ctx.fillStyle = accent1;
+                    ctx.font = '10px monospace';
+                    
+                    columns.forEach(col => {
+                        const char = String.fromCharCode(33 + Math.floor(Math.random() * 93));
+                        ctx.fillText(char, col.x, col.y);
+                        
+                        col.y += col.speed;
+                        if (col.y > canvas.height) {
+                            col.y = Math.random() * -50;
+                            col.speed = 1 + Math.random() * 2;
+                        }
+                    });
+                    
+                    setTimeout(() => {
+                        if (active) requestAnimationFrame(draw);
+                    }, 50);
+                };
+                
+                const card = canvas.closest('.project-card');
+                card.addEventListener('mouseenter', () => {
+                    active = true;
+                    canvas.width = canvas.parentElement.clientWidth;
+                    canvas.height = canvas.parentElement.clientHeight;
+                    initCols();
+                    draw();
+                });
+                card.addEventListener('mouseleave', () => {
+                    active = false;
+                });
+            },
+            
+            setupDeFiChart() {
+                const canvas = document.getElementById('project-canvas-3');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let active = false;
+                let dataPoints = [];
+                let frame = 0;
+                
+                const initPoints = () => {
+                    dataPoints = [];
+                    let val = canvas.height * 0.6;
+                    for (let i = 0; i < 40; i++) {
+                        val += (Math.random() - 0.5) * 15;
+                        val = Math.max(20, Math.min(canvas.height - 20, val));
+                        dataPoints.push(val);
+                    }
+                };
+                
+                const draw = () => {
+                    if (!active) {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        return;
+                    }
+                    frame++;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    const accent2 = getComputedStyle(document.documentElement).getPropertyValue('--accent-2').trim();
+                    ctx.strokeStyle = accent2;
+                    ctx.lineWidth = 2.5;
+                    ctx.lineJoin = 'round';
+                    ctx.lineCap = 'round';
+                    
+                    if (frame % 8 === 0) {
+                        dataPoints.shift();
+                        let last = dataPoints[dataPoints.length - 1];
+                        last += (Math.random() - 0.5) * 18;
+                        last = Math.max(20, Math.min(canvas.height - 20, last));
+                        dataPoints.push(last);
+                    }
+                    
+                    ctx.beginPath();
+                    const step = canvas.width / (dataPoints.length - 1);
+                    dataPoints.forEach((val, idx) => {
+                        if (idx === 0) {
+                            ctx.moveTo(0, val);
+                        } else {
+                            ctx.lineTo(idx * step, val);
+                        }
+                    });
+                    ctx.stroke();
+                    
+                    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                    gradient.addColorStop(0, accent2 + '33');
+                    gradient.addColorStop(1, 'transparent');
+                    
+                    ctx.lineTo(canvas.width, canvas.height);
+                    ctx.lineTo(0, canvas.height);
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
+                    
+                    requestAnimationFrame(draw);
+                };
+                
+                const card = canvas.closest('.project-card');
+                card.addEventListener('mouseenter', () => {
+                    active = true;
+                    canvas.width = canvas.parentElement.clientWidth;
+                    canvas.height = canvas.parentElement.clientHeight;
+                    initPoints();
+                    draw();
+                });
+                card.addEventListener('mouseleave', () => {
+                    active = false;
+                });
+            }
+        };
+
+        // --- 6. Sound Toggle & Audio Control ---
+        const AudioControl = {
+            init() {
+                const btn = document.getElementById('audio-toggle-btn');
+                const icon = document.getElementById('audio-btn-icon');
+                if (!btn) return;
+                
+                btn.addEventListener('click', () => {
+                    Synth.init();
+                    Synth.muted = !Synth.muted;
+                    
+                    if (Synth.muted) {
+                        icon.className = 'fa fa-volume-off';
+                        btn.style.color = 'var(--text-muted)';
+                    } else {
+                        icon.className = 'fa fa-volume-up';
+                        btn.style.color = 'var(--accent-1)';
+                        Synth.playSuccess();
+                        showNotification("AUDIO_ENGINE", "Sound FX synthesized live.");
+                    }
+                });
+            }
+        };
+
+        function initKeystrokeAudio() {
+            const inputs = document.querySelectorAll('input, textarea, select');
+            inputs.forEach(el => {
+                el.addEventListener('input', () => {
+                    Synth.playKeyPress();
+                });
+            });
+        }
+
+        function injectCLISounds() {
+            const cmdInput = document.getElementById('terminal-command-input');
+            if (cmdInput) {
+                cmdInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        setTimeout(() => {
+                            const lastLog = document.querySelector('#cli-logs-container .terminal-line:last-child');
+                            if (lastLog) {
+                                if (lastLog.textContent.includes('ERR') || lastLog.textContent.includes('NOT FOUND')) {
+                                    Synth.playError();
+                                } else {
+                                    Synth.playKeyPress();
+                                }
+                            }
+                        }, 50);
+                    }
+                });
+            }
+        }
+
+        // Global Systems Initialization
+        document.addEventListener("DOMContentLoaded", () => {
+            InteractiveSounds.init();
+            ThemeSystem.init();
+            ParticlesBg.init();
+            HoverPreviews.init();
+            AudioControl.init();
+            initKeystrokeAudio();
+            injectCLISounds();
+        });
     </script>
 </body>
 </html>
